@@ -38,25 +38,25 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
   const brain = analysis.brainDominance || {
     leftPercentage: 50,
     rightPercentage: 50,
-    summary: 'Seimbang',
-    detail: 'Keseimbangan belahan otak mendukung pemikiran analitis dan kreativitas secara harmonis.',
-    sectionConclusion: 'Siswa bekerja optimal ketika ide kreatif diwadahi dalam target dan jadwal aksi terukur.',
+    summary: 'Seimbang Antara Otak Kiri & Kanan',
+    detail: 'Anak memiliki keseimbangan yang baik antara pemikiran teratur-logis dan kreativitas-imajinasi.',
+    sectionConclusion: 'Cara terbaik membimbing anak adalah memadukan ide-ide kreatifnya dengan rencana belajar harian yang teratur.',
   };
 
   const intelligences = analysis.multipleIntelligences || [];
   const intelligencesConclusion =
     analysis.multipleIntelligencesConclusion ||
-    `Kombinasi dua kecerdasan teratas (${intelligences[0]?.name || 'Logis-Matematis'} dan ${intelligences[1]?.name || 'Spasial'}) merupakan kekuatan bawaan utama siswa yang harus menjadi poros pengembangan akademik dan ekstrakurikuler.`;
+    `Dua kecerdasan teratas (${intelligences[0]?.name || 'Logika & Hitungan'} dan ${intelligences[1]?.name || 'Gambar & Ruang'}) adalah bakat alami terkuat anak. Kembangkan dua bidang ini lewat pilihan pelajaran, hobi, dan ekstrakurikuler agar anak makin percaya diri dan berprestasi.`;
 
   const vak = analysis.learningStyleVAK || {
     visual: 35,
     auditory: 35,
     kinesthetic: 30,
-    dominantStyle: 'Visual',
-    explanation: 'Siswa memiliki kepekaan sensorik yang baik dalam mengolah informasi.',
-    teacherStrategies: ['Gunakan media visual dan peta konsep berwarna.'],
-    studentStrategies: ['Buat catatan terstruktur dengan stabilo.'],
-    sectionConclusion: 'Materi pelajaran yang disajikan dengan media visual dan visualisasi diagram akan melipatgandakan retensi daya ingat siswa.',
+    dominantStyle: 'Visual (Mata)',
+    explanation: 'Anak paling cepat dan mudah memahami pelajaran lewat gambar, bagan warna, dan melihat contoh secara langsung.',
+    teacherStrategies: ['Jelaskan materi dengan bahasa sederhana disertai gambar atau bagan alur yang jelas.'],
+    studentStrategies: ['Buat catatan ringkas dengan stabilo warna-warni agar mata langsung fokus pada poin penting.'],
+    sectionConclusion: 'Materi pelajaran yang disajikan dengan media visual dan gambar akan membuat anak jauh lebih cepat paham dan ingatannya tahan lama.',
   };
 
   const quotients = analysis.quotientOrientation || {
@@ -64,49 +64,49 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
     eq: 26,
     aq: 24,
     cq: 22,
-    explanation: 'Distribusi kuadran kecerdasan menunjukkan potensi intelektual dan emosional yang seimbang.',
+    explanation: 'Potensi kecerdasan anak terbagi seimbang antara IQ (nalar & logika), EQ (rasa & empati), AQ (daya tahan mental saat menghadapi kesulitan), dan CQ (kreativitas ide baru).',
   };
 
   const personality = analysis.personalityAndThinking || {
-    primaryType: 'Visioner Analitis',
-    coreCharacteristics: ['Fokus tujuan', 'Mandiri', 'Terstruktur', 'Berorientasi hasil nyata'],
-    decisionMakingStyle: 'Mengumpulkan fakta dan alternatif secara sistematis sebelum memutuskan.',
-    stressResponse: 'Memerlukan jeda reflektif sejenak untuk menata ulang strategi saat menghadapi tekanan.',
-    communicationStyle: 'Lugas, jelas, dan mengutamakan substansi yang relevan.',
-    sectionConclusion: 'Komunikasi apresiatif dan kejelasan target tugas akan mengoptimalkan ketahanan mental dan motivasi siswa.',
+    primaryType: 'Tipe Pemikir Rapi & Terencana (Suka Keteraturan)',
+    coreCharacteristics: ['Fokus pada tujuan', 'Mandiri', 'Teratur dan rapi', 'Suka hasil yang jelas'],
+    decisionMakingStyle: 'Mengambil keputusan dengan tenang, melihat fakta yang ada, dan memikirkan akibatnya secara matang.',
+    stressResponse: 'Bila tugas terasa menumpuk atau lelah, anak butuh waktu jeda santai sejenak, lalu dibantu memilah tugas mana yang perlu diselesaikan satu per satu.',
+    communicationStyle: 'Suka diajak bicara secara jujur, ramah, tidak digurui, dan diberi ruang untuk menyampaikan pendapatnya.',
+    sectionConclusion: 'Kunci utama membangkitkan semangat anak adalah komunikasi yang hangat, pujian atas usahanya (bukan hanya hasil akhir), dan arahan yang jelas.',
   };
 
   const tfrc = analysis.learningCapacityTFRC || {
     tfrcValue: metrics.tfrc,
-    speedRating: metrics.tfrc > 140 ? 'Cepat & Adaptif' : 'Moderat & Stabil',
-    analysis: `Total Ridge Count ${metrics.tfrc} garis mengindikasikan kapasitas neokorteks yang adaptif dalam menyerap konsep baru.`,
+    speedRating: metrics.tfrc > 140 ? 'Cepat & Lincah Adaptif' : 'Mantap & Stabil',
+    analysis: `Nilai TFRC (${metrics.tfrc} garis) menggambarkan daya tampung memori dan kecepatan otak anak dalam menyerap pelajaran baru. Anak memiliki kapasitas otak yang sangat baik untuk belajar berbagai materi sekolah.`,
     capacityCategory: 'Tinggi',
-    sectionConclusion: `Kapasitas TFRC ${metrics.tfrc} garis sangat potensial. Kunci utamanya adalah konsistensi belajar harian 30-45 menit yang fokus tanpa jeda panjang.`,
+    sectionConclusion: `Dengan daya tangkap otak sebesar ${metrics.tfrc} garis, anak cukup belajar rutin 30–45 menit setiap hari dengan suasana nyaman untuk mencapai hasil maksimal.`,
   };
 
   const recs = analysis.educationalCareerRecommendations || {
     highSchoolRecommendation: {
       recommendedTrack: 'SMA Jurusan MIPA / Sains Terapan',
       smkSpecializations: ['Rekayasa Perangkat Lunak', 'Teknik Desain Pemodelan', 'Mekatronika'],
-      academicReasoning: 'Profil neokorteks selaras dengan penalaran logis dan pemecahan masalah ilmiah.',
+      academicReasoning: 'Bakat alami anak sangat cocok untuk bidang yang melatih daya nalar, logika teratur, dan pemecahan masalah praktis.',
     },
-    universityMajors: ['Teknik Informatika', 'Data Science & AI', 'Arsitektur & Perencanaan Wilayah', 'Teknik Biomedis'],
-    careerProfessions: ['Solution Architect', 'Data Scientist', 'Desainer Produk Digital', 'Peneliti R&D'],
-    developmentAdvice: 'Kembangkan portofolio karya nyata dan asah keterampilan kolaboratif.',
-    sectionConclusion: 'Jalur akademik di bidang sains, teknologi, dan analisis terapan memberikan tingkat pencapaian prestasi dan kepuasan belajar tertinggi bagi siswa.',
+    universityMajors: ['Teknik Informatika / Ilmu Komputer', 'Data Science & AI', 'Arsitektur & Desain Perencanaan', 'Teknik Biomedis'],
+    careerProfessions: ['Ahli Software & AI', 'Data Scientist / Analis Data', 'Desainer Produk Digital / Arsitek', 'Peneliti R&D'],
+    developmentAdvice: 'Beri anak ruang berkarya, dukung hobi yang melatih kreativitas, dan dampingi dengan komunikasi santai di rumah.',
+    sectionConclusion: 'Pilihan jalur akademik di bidang sains, teknologi, dan nalar terapan memberikan tingkat kepuasan belajar dan prestasi tertinggi bagi anak.',
   };
 
   const executiveSummary = analysis.overallExecutiveSummary || {
-    coreIdentity: `Siswa memiliki profil potensi genetik unggul dengan kecerdasan utama pada ${intelligences[0]?.name || 'Logis-Matematis'} dan modalitas belajar ${vak.dominantStyle}. Karakter dasarnya mandiri, kritis, dan berorientasi pada hasil nyata.`,
-    winningFormula: `Kombinasikan pemahaman konseptual ${vak.dominantStyle} dengan latihan terstruktur, berikan otonomi dalam eksplorasi tugas, dan dukung dengan apresiasi berkala atas proses belajarnya.`,
+    coreIdentity: `Anak memiliki bakat alami istimewa pada ${intelligences[0]?.name || 'Logika & Hitungan'}, didukung cara berpikir yang teratur dan gaya belajar yang mengandalkan ${vak.dominantStyle}. Pada dasarnya, anak adalah sosok yang cerdas, punya rasa ingin tahu tinggi, dan ingin memberikan hasil terbaik bila diarahkan dengan tepat.`,
+    winningFormula: `Gunakan cara belajar berbasis ${vak.dominantStyle}, berikan arahan tugas yang jelas tanpa terlalu banyak tekanan, fokuskan pada minat anak, serta berikan apresiasi yang tulus setiap kali ia berusaha keras.`,
     parentTeacherActionPlan: [
-      `Fasilitasi gaya belajar ${vak.dominantStyle} dengan media belajar yang mendukung di rumah dan sekolah.`,
-      `Arahkan minat peminatan akademik sesuai kekuatan ${intelligences[0]?.name || 'Logis-Matematis'}.`,
-      `Jaga ritme belajar dengan interval 25-30 menit untuk menjaga stamina kognitif sesuai kapasitas TFRC (${tfrc.tfrcValue} garis).`,
-      `Bangun komunikasi keluarga yang terbuka dan suportif untuk memupuk Adversity Quotient (AQ).`,
-      `Konsultasikan perkembangan berkala dengan Konselor Lembaga untuk evaluasi kurikulum adaptif.`,
+      `Dampingi anak belajar dengan cara yang ia sukai (${vak.dominantStyle}), misalnya menggunakan gambar warna atau mengajak diskusi santai.`,
+      `Dukung minat dan bakat anak pada ${intelligences[0]?.name || 'Logika & Hitungan'} dengan memberinya buku menarik atau kegiatan yang seru.`,
+      `Atur jadwal istirahat yang cukup di sela-sela belajar (setiap 25–30 menit belajar fokus, beri jeda santai 5 menit) agar otak tidak cepat lelah.`,
+      `Ketika nilai atau hasil tugasnya belum sempurna, beri semangat dan bantu cari letak kesalahannya bersama-sama tanpa membanding-bandingkannya.`,
+      `Arahkan pemilihan jurusan sekolah (SMA/SMK) dan cita-cita masa depan sesuai rekomendasi bakat alaminya agar belajarnya selalu menyenangkan.`,
     ],
-    counselorNote: `Bakat bawaan adalah anugerah genetik terbaik; dengan pendampingan yang tepat dari orang tua dan sekolah, siswa berpeluang besar mencapai prestasi luar biasa dan masa depan yang cemerlang.`,
+    counselorNote: `Setiap anak terlahir dengan benih kehebatan masing-masing. Bakat bawaan ini adalah kompas penunjuk jalan. Dengan kasih sayang orang tua dan bimbingan guru yang tepat, anak pasti akan tumbuh menjadi pribadi yang mandiri, percaya diri, dan berprestasi gemilang.`,
   };
 
   // Pre-calculate Radar Polygon points for SVG
@@ -1324,7 +1324,7 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
         <!-- BAGIAN A: DOMINASI BELAHAN OTAK -->
         <div class="section-title">
           <span class="section-letter">A</span>
-          <h2>Dominasi Belahan Otak (Brain Hemisphere Dominance)</h2>
+          <h2>Cara Berpikir Alami: Belahan Otak Kiri vs Belahan Otak Kanan</h2>
         </div>
 
         <div class="brain-visual">
@@ -1345,38 +1345,38 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
             <div class="hemi-box">
               <div class="hemi-box-header">
                 <span class="hemi-box-title left">1. Otak Kiri (${brain.leftPercentage}%)</span>
-                <span class="hemi-tag">${brain.leftPercentage >= brain.rightPercentage ? 'Dominan' : 'Suportif'}</span>
+                <span class="hemi-tag">${brain.leftPercentage >= brain.rightPercentage ? 'Dominan' : 'Pendukung'}</span>
               </div>
               <div class="keywords">
-                <span class="kw">Logika Deduktif</span>
-                <span class="kw">Bahasa Terstruktur</span>
-                <span class="kw">Matematika</span>
-                <span class="kw">Sekuensial</span>
+                <span class="kw">Berpikir Runtut</span>
+                <span class="kw">Suka Fakta</span>
+                <span class="kw">Teratur &amp; Rapi</span>
+                <span class="kw">Langkah demi Langkah</span>
               </div>
               <p class="hemi-desc">
-                Mengatur penalaran analitis berbasis fakta dan sistematika langkah-demi-langkah. Siswa menyukai kejelasan alur berpikir dan bukti rasional.
+                Mengatur cara berpikir runtut, teratur, dan analitis. Anak menyukai aturan jelas, langkah-demi-langkah, dan bukti nyata sebelum bertindak.
               </p>
             </div>
 
             <div class="hemi-box">
               <div class="hemi-box-header">
                 <span class="hemi-box-title right">2. Otak Kanan (${brain.rightPercentage}%)</span>
-                <span class="hemi-tag teal">${brain.rightPercentage > brain.leftPercentage ? 'Dominan' : 'Suportif'}</span>
+                <span class="hemi-tag teal">${brain.rightPercentage > brain.leftPercentage ? 'Dominan' : 'Pendukung'}</span>
               </div>
               <div class="keywords">
-                <span class="kw">Kreativitas &amp; Ide</span>
-                <span class="kw">Spasial 3D</span>
-                <span class="kw">Intuisi &amp; Visi</span>
-                <span class="kw">Holistik</span>
+                <span class="kw">Kaya Ide Baru</span>
+                <span class="kw">Imajinasi Tinggi</span>
+                <span class="kw">Kepekaan Seni</span>
+                <span class="kw">Melihat Gambaran Luas</span>
               </div>
               <p class="hemi-desc">
-                Mengatur daya imajinasi konseptual, kepekaan visual-spasial, dan ide kreatif. Siswa tanggap melihat gambaran besar dan solusi di luar kebiasaan.
+                Mengatur daya cipta ide baru, kepekaan seni, dan imajinasi. Anak cepat melihat gambaran besar, kreatif mencari solusi, dan suka kebebasan berekspresi.
               </p>
             </div>
           </div>
 
           <div class="conclusion-box">
-            <strong>Kesimpulan Bagian A:</strong>
+            <strong>Kesimpulan Bagian A (Cara Berpikir Alami):</strong>
             ${escapeHtml(brain.sectionConclusion || brain.detail || brain.summary)}
           </div>
         </div>
@@ -1384,7 +1384,7 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
         <!-- BAGIAN B: 8 KECERDASAN MAJEMUK (RINGKASAN & TOP 4) -->
         <div class="section-title">
           <span class="section-letter teal">B</span>
-          <h2>Pemetaan 8 Kecerdasan Majemuk (Howard Gardner) - Ringkasan</h2>
+          <h2>Pemetaan 8 Bakat Kecerdasan Alami Anak (Howard Gardner) - Ringkasan</h2>
         </div>
 
         <div class="gardner-page1-layout">
@@ -1406,7 +1406,7 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
               <polygon points="${radarPoints}" fill="rgba(79, 70, 229, 0.28)" stroke="#4338ca" stroke-width="2.5"/>
               <circle cx="100" cy="100" r="3" fill="#4338ca"/>
             </svg>
-            <div class="radar-caption">Grafik Poligon Sebaran</div>
+            <div class="radar-caption">Grafik Sebaran Bakat Anak</div>
           </div>
 
           <div class="top4-grid">
@@ -1414,7 +1414,7 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
           </div>
 
           <div class="summary-text-box">
-            Dua kecerdasan alami teratas siswa adalah <strong>${escapeHtml(intelligences[0]?.name || '-')}</strong> (${intelligences[0]?.score || 0}%) dan <strong>${escapeHtml(intelligences[1]?.name || '-')}</strong> (${intelligences[1]?.score || 0}%). Merupakan bakat genetik bawaan terbaik yang dapat diakselerasi menjadi keunggulan kompetitif masa depan.
+            Dua bakat alami paling menonjol pada anak adalah <strong>${escapeHtml(intelligences[0]?.name || '-')}</strong> (${intelligences[0]?.score || 0}%) dan <strong>${escapeHtml(intelligences[1]?.name || '-')}</strong> (${intelligences[1]?.score || 0}%). Merupakan bakat alami terbaik yang paling mudah dikembangkan menjadi prestasi gemilang.
           </div>
         </div>
       </div>
@@ -1438,15 +1438,15 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
 
         <div class="section-title">
           <span class="section-letter teal">B</span>
-          <h2>Matriks Detail 8 Kecerdasan Majemuk (Lanjutan)</h2>
+          <h2>Matriks Detail 8 Bakat Kecerdasan Alami Anak (Lanjutan)</h2>
         </div>
 
         <table class="intel-table">
           <thead>
             <tr>
               <th class="col-rank">No</th>
-              <th>Dimensi Kecerdasan &amp; Potensi Aplikasi</th>
-              <th class="col-level">Tingkat Kekuatan</th>
+              <th>Bakat Kecerdasan &amp; Karakteristik Alami</th>
+              <th class="col-level">Tingkat Bakat</th>
               <th class="col-score">Skor Potensi</th>
             </tr>
           </thead>
@@ -1456,32 +1456,32 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
         </table>
 
         <div class="conclusion-box teal" style="margin-bottom: 12px;">
-          <strong>Kesimpulan Bagian B (Kecerdasan Majemuk):</strong>
+          <strong>Kesimpulan Bagian B (Bakat Alami Anak):</strong>
           ${escapeHtml(intelligencesConclusion)}
         </div>
 
         <!-- BAGIAN C: GAYA BELAJAR VAK -->
         <div class="section-title">
           <span class="section-letter">C</span>
-          <h2>Gaya Belajar Alami (VAK: Visual, Auditori, Kinestetik)</h2>
+          <h2>Gaya Belajar Paling Nyaman (VAK: Visual, Auditori, Kinestetik)</h2>
         </div>
 
         <div class="vak-container">
           <div class="vak-cards">
             <div class="vak-card ${vak.dominantStyle.includes('Visual') ? 'active-visual' : ''}">
-              <div class="label">Visual</div>
+              <div class="label">Visual (Lewat Mata)</div>
               <span class="score indigo">${vak.visual}%</span>
-              <p class="desc">Menyerap materi lewat bagan, visualisasi warna, ilustrasi, dan mind-map.</p>
+              <p class="desc">Paham lewat gambar, bagan warna, diagram alur, video edukasi, dan tulisan berstabilo.</p>
             </div>
             <div class="vak-card ${vak.dominantStyle.includes('Auditori') ? 'active-auditory' : ''}">
-              <div class="label">Auditori</div>
+              <div class="label">Auditori (Lewat Telinga)</div>
               <span class="score teal">${vak.auditory}%</span>
-              <p class="desc">Menyerap materi lewat penjelasan lisan, diskusi interaktif, dan intonasi.</p>
+              <p class="desc">Paham lewat mendengarkan penjelasan guru, cerita, diskusi tanya-jawab, atau membaca bersuara.</p>
             </div>
             <div class="vak-card ${vak.dominantStyle.includes('Kinestetik') ? 'active-kinesthetic' : ''}">
-              <div class="label">Kinestetik</div>
+              <div class="label">Kinestetik (Gerak &amp; Praktik)</div>
               <span class="score amber">${vak.kinesthetic}%</span>
-              <p class="desc">Menyerap materi lewat praktik langsung, eksperimen laboratorium, dan gerak fisik.</p>
+              <p class="desc">Paham lewat praktik langsung, menyentuh alat praktik, eksperimen sains, atau simulasi gerak.</p>
             </div>
           </div>
 
@@ -1492,18 +1492,18 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
           </div>
 
           <div style="font-size: 8pt; color: #1e293b; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 10px; margin-bottom: 6px;">
-            <strong>Modalitas Dominan:</strong> Siswa memiliki kecenderungan gaya belajar <strong style="color: #4338ca;">${escapeHtml(vak.dominantStyle)}</strong>. ${escapeHtml(vak.explanation)}
+            <strong>Gaya Belajar Utama Anak:</strong> Anak paling nyaman belajar dengan gaya <strong style="color: #4338ca;">${escapeHtml(vak.dominantStyle)}</strong>. ${escapeHtml(vak.explanation)}
           </div>
 
           <div class="vak-strategies">
             <div class="strategy-box">
-              <h4>Strategi Mengajar di Kelas (Untuk Guru):</h4>
+              <h4>Tips Mengajar di Kelas (Untuk Guru):</h4>
               <ul>
                 ${(vak.teacherStrategies || []).map((s) => `<li>${escapeHtml(s)}</li>`).join('')}
               </ul>
             </div>
             <div class="strategy-box">
-              <h4>Strategi Belajar Mandiri di Rumah (Orang Tua &amp; Siswa):</h4>
+              <h4>Tips Belajar Menyenangkan di Rumah (Orang Tua &amp; Siswa):</h4>
               <ul>
                 ${(vak.studentStrategies || []).map((s) => `<li>${escapeHtml(s)}</li>`).join('')}
               </ul>
@@ -1511,8 +1511,8 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
           </div>
 
           <div class="conclusion-box" style="margin-top: 8px;">
-            <strong>Kesimpulan Bagian C:</strong>
-            ${escapeHtml(vak.sectionConclusion || 'Stimulasi sensorik yang sesuai modalitas belajar mempercepat pemahaman materi sulit serta memperpanjang daya ingat.')}
+            <strong>Kesimpulan Bagian C (Cara Belajar Efektif):</strong>
+            ${escapeHtml(vak.sectionConclusion || 'Sarana belajar yang sesuai gaya belajar anak membuat materi sulit jadi mudah dipahami dan diingat lebih lama.')}
           </div>
         </div>
       </div>
@@ -1537,41 +1537,41 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
           <!-- BAGIAN D: GAYA BERPIKIR & KEPRIBADIAN -->
           <div class="card-boxed">
             <div>
-              <h3>D. Gaya Berpikir &amp; Kepribadian</h3>
+              <h3>D. Karakter Alami &amp; Kebiasaan Sehari-Hari</h3>
               <div style="margin-bottom: 6px;">
-                <span style="font-size: 7.2pt; color: #64748b; font-weight: 600;">Tipe Kepribadian Utama:</span>
+                <span style="font-size: 7.2pt; color: #64748b; font-weight: 600;">Tipe Karakter Utama:</span>
                 <div style="font-size: 11pt; font-weight: 900; color: #4338ca;">${escapeHtml(personality.primaryType)}</div>
               </div>
               <div style="margin-bottom: 6px;">
-                <span style="font-size: 7.2pt; color: #64748b; font-weight: 600; display: block; margin-bottom: 2px;">Karakter Kunci:</span>
+                <span style="font-size: 7.2pt; color: #64748b; font-weight: 600; display: block; margin-bottom: 2px;">Ciri Khas Sehari-Hari:</span>
                 <div class="tag-cloud">
                   ${(personality.coreCharacteristics || []).map((c) => `<span class="tag-item">${escapeHtml(c)}</span>`).join('')}
                 </div>
               </div>
               <div style="font-size: 7.8pt; line-height: 1.35; color: #475569; margin-bottom: 4px;">
-                <strong>Pengambilan Keputusan:</strong> ${escapeHtml(personality.decisionMakingStyle)}
+                <strong>Cara Mengambil Keputusan:</strong> ${escapeHtml(personality.decisionMakingStyle)}
               </div>
               <div style="font-size: 7.8pt; line-height: 1.35; color: #475569;">
-                <strong>Respon Tekanan:</strong> ${escapeHtml(personality.stressResponse)}
+                <strong>Saat Lelah atau Menghadapi Tugas Sulit:</strong> ${escapeHtml(personality.stressResponse)}
               </div>
             </div>
             <div class="conclusion-box" style="margin-top: 6px;">
-              <strong>Kesimpulan Karakter:</strong>
-              ${escapeHtml(personality.sectionConclusion || 'Pola asuh apresiatif dan kejelasan target mendukung stabilitas motivasi mental anak.')}
+              <strong>Kesimpulan Karakter &amp; Emosi:</strong>
+              ${escapeHtml(personality.sectionConclusion || 'Komunikasi yang hangat dan apresiasi tulus membuat anak makin bersemangat dan percaya diri.')}
             </div>
           </div>
 
           <!-- BAGIAN E: KAPASITAS TFRC & KUADRAN KECERDASAN -->
           <div class="card-boxed">
             <div>
-              <h3>E. Kapasitas Belajar (TFRC) &amp; Kuadran</h3>
+              <h3>E. Daya Tangkap Otak (TFRC) &amp; Sebaran Potensi</h3>
               <div class="tfrc-highlight">
                 <div>
-                  <span style="font-size: 7.2pt; color: #64748b; font-weight: 600; display: block;">Total Ridge Count (TFRC):</span>
+                  <span style="font-size: 7.2pt; color: #64748b; font-weight: 600; display: block;">Daya Tangkap Otak (TFRC):</span>
                   <span class="tfrc-num">${metrics.tfrc} Garis</span>
                 </div>
                 <div style="text-align: right;">
-                  <span style="font-size: 7.2pt; color: #64748b; font-weight: 600; display: block;">Kecepatan Neokorteks:</span>
+                  <span style="font-size: 7.2pt; color: #64748b; font-weight: 600; display: block;">Kecepatan Menangkap:</span>
                   <span style="font-size: 8.5pt; font-weight: 800; color: #4338ca;">${escapeHtml(tfrc.speedRating)}</span>
                 </div>
               </div>
@@ -1579,7 +1579,7 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
                 ${escapeHtml(tfrc.analysis)}
               </div>
               <div>
-                <span style="font-size: 7.2pt; color: #64748b; font-weight: 600; display: block; margin-bottom: 2px;">Sebaran Kuadran Kecerdasan:</span>
+                <span style="font-size: 7.2pt; color: #64748b; font-weight: 600; display: block; margin-bottom: 2px;">Sebaran 4 Potensi Kecerdasan Anak:</span>
                 <div class="quotient-grid">
                   <div class="quotient-card">
                     <span class="q-name">IQ</span>
@@ -1601,8 +1601,8 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
               </div>
             </div>
             <div class="conclusion-box teal" style="margin-top: 6px;">
-              <strong>Kesimpulan Kapasitas TFRC:</strong>
-              ${escapeHtml(tfrc.sectionConclusion || 'Jaga ritme belajar teratur 30-45 menit untuk menjaga daya serap optimal tanpa kejenuhan.')}
+              <strong>Kesimpulan Kapasitas Belajar &amp; Ritme:</strong>
+              ${escapeHtml(tfrc.sectionConclusion || 'Jaga ritme belajar teratur 25-30 menit dengan istirahat 5 menit untuk menjaga daya serap otak selalu segar.')}
             </div>
           </div>
         </div>
@@ -1610,7 +1610,7 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
         <!-- BAGIAN F: REKOMENDASI PENDIDIKAN & KARIER -->
         <div class="section-title">
           <span class="section-letter">F</span>
-          <h2>Rekomendasi Penjurusan Studi &amp; Karier Masa Depan</h2>
+          <h2>Rekomendasi Pilihan Sekolah, Kuliah, &amp; Cita-Cita Masa Depan</h2>
         </div>
 
         <div class="recs-grid">
@@ -1620,7 +1620,7 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
             <p style="color: #475569; margin-bottom: 4px; line-height: 1.35;">${escapeHtml(recs.highSchoolRecommendation?.academicReasoning || '')}</p>
             ${(recs.highSchoolRecommendation?.smkSpecializations?.length ?? 0) > 0 ? `
               <div style="font-size: 7.2pt; color: #64748b;">
-                <strong>Opsi Kejuruan (SMK):</strong>
+                <strong>Opsi Kejuruan (SMK) yang Cocok:</strong>
                 <div class="tag-cloud">
                   ${recs.highSchoolRecommendation.smkSpecializations?.map((s) => `<span class="tag-item">${escapeHtml(s)}</span>`).join('')}
                 </div>
@@ -1629,7 +1629,7 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
           </div>
 
           <div class="rec-card">
-            <h4>2. Program Studi Kuliah</h4>
+            <h4>2. Pilihan Jurusan Kuliah yang Pas</h4>
             <p style="color: #64748b; font-size: 7.2pt; margin-bottom: 3px;">Jurusan perguruan tinggi paling selaras:</p>
             <ul style="margin-left: 14px; color: #1e293b; font-weight: 700; line-height: 1.45;">
               ${(recs.universityMajors || []).map((m) => `<li>${escapeHtml(m)}</li>`).join('')}
@@ -1637,7 +1637,7 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
           </div>
 
           <div class="rec-card">
-            <h4>3. Profesi &amp; Karier Masa Depan</h4>
+            <h4>3. Peluang Karier Masa Depan</h4>
             <p style="color: #64748b; font-size: 7.2pt; margin-bottom: 3px;">Bidang profesi dengan prospek terbaik:</p>
             <div class="tag-cloud">
               ${(recs.careerProfessions || []).map((p) => `<span class="tag-item" style="font-weight: 700;">${escapeHtml(p)}</span>`).join('')}
@@ -1646,8 +1646,8 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
         </div>
 
         <div class="conclusion-box">
-          <strong>Kesimpulan Bagian F (Arah Masa Depan):</strong>
-          ${escapeHtml(recs.sectionConclusion || 'Jalur akademik di bidang sains, teknologi, dan analisis terapan memberikan tingkat kepuasan dan pencapaian prestasi tertinggi bagi siswa.')}
+          <strong>Kesimpulan Bagian F (Arah Masa Depan yang Pasti):</strong>
+          ${escapeHtml(recs.sectionConclusion || 'Pilihan jalur akademik dan profesi ini memberikan keselarasan sempurna antara bakat alami anak dan cita-cita masa depannya.')}
         </div>
       </div>
 
@@ -1669,14 +1669,14 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
 
         <div class="section-title">
           <span class="section-letter teal">★</span>
-          <h2>Kesimpulan Umum &amp; Rencana Pendampingan Holistik</h2>
+          <h2>Kesimpulan Umum &amp; Panduan Pendampingan Anak Hebat</h2>
         </div>
 
         <div class="exec-summary-card">
           <!-- 1. Core Identity -->
           <div class="exec-block">
             <div class="exec-heading indigo">
-              <span>1. Profil Inti Siswa Hebat (Core Identity)</span>
+              <span>1. Siapakah Sosok Anak Anda Sebenarnya? (Profil Inti Anak)</span>
             </div>
             <p class="exec-text">${escapeHtml(executiveSummary.coreIdentity)}</p>
           </div>
@@ -1684,7 +1684,7 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
           <!-- 2. Winning Formula -->
           <div class="exec-block">
             <div class="exec-heading cyan">
-              <span>2. Formula Sukses Belajar (The Winning Formula)</span>
+              <span>2. Resep Rahasia Sukses Belajar Anak (Winning Formula)</span>
             </div>
             <p class="exec-text">${escapeHtml(executiveSummary.winningFormula)}</p>
           </div>
@@ -1692,7 +1692,7 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
           <!-- 3. Action Plan -->
           <div class="exec-block">
             <div class="exec-heading amber">
-              <span>3. Rencana Aksi Sinergis Orang Tua &amp; Sekolah (5 Langkah)</span>
+              <span>3. Rencana Aksi Nyata 5 Langkah untuk Orang Tua &amp; Guru</span>
             </div>
             <ul class="action-list">
               ${actionPlanItems}
@@ -1702,7 +1702,7 @@ export function generateA4HtmlReport(options: GenerateReportOptions): string {
           <!-- 4. Counselor Note -->
           <div class="exec-block">
             <div class="exec-heading indigo">
-              <span>4. Catatan Motivasi Konselor Pembimbing</span>
+              <span>4. Catatan Kasih Sayang &amp; Motivasi dari Konselor</span>
             </div>
             <p class="counselor-quote">&ldquo;${escapeHtml(executiveSummary.counselorNote)}&rdquo;</p>
           </div>

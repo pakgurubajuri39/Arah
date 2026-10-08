@@ -85,51 +85,51 @@ function generateFallbackPsychometricReport(
   const intelligencesRaw = [
     {
       id: 'logical_mathematical',
-      name: 'Kecerdasan Logis-Matematis',
+      name: 'Kecerdasan Logika & Hitungan (Logis-Matematis)',
       score: getFingerScore('R2', 3.8),
-      explanation: 'Memiliki kemampuan analisis deduktif yang terstruktur, cepat menangkap pola numerik, dan memecahkan masalah logis secara sistematis.',
+      explanation: 'Anak sangat jago berpikir runtut, suka berhitung, gemar mencari tahu sebab-akibat, dan senang memecahkan teka-teki atau soal logika.',
     },
     {
       id: 'spatial',
-      name: 'Kecerdasan Spasial-Visual',
+      name: 'Kecerdasan Gambar & Ruang (Spasial-Visual)',
       score: getFingerScore('L2', 3.7),
-      explanation: 'Daya imajinasi konseptual tiga dimensi yang tinggi, mahir memvisualisasikan ide abstrak, rancangan desain, dan pemetaan ruang.',
+      explanation: 'Anak memiliki imajinasi hidup, pandai membayangkan bentuk 3D, suka menggambar/desain, dan cepat paham denah, peta, atau diagram visual.',
     },
     {
       id: 'interpersonal',
-      name: 'Kecerdasan Interpersonal',
+      name: 'Kecerdasan Bergaul & Memimpin (Interpersonal)',
       score: getFingerScore('R1', 3.6),
-      explanation: 'Mahir membaca dinamika sosial, berdiplomasi, memotivasi rekan sebaya, dan membangun jejaring kerja sama kolaboratif.',
+      explanation: 'Anak mudah berteman, peka terhadap perasaan sesama, senang bekerja sama dalam kelompok, dan punya bakat alami memimpin.',
     },
     {
       id: 'intrapersonal',
-      name: 'Kecerdasan Intrapersonal',
+      name: 'Kecerdasan Mengenal Diri Sendiri (Intrapersonal)',
       score: getFingerScore('L1', 3.7),
-      explanation: 'Kesadaran diri (self-awareness) yang sangat matang, berprinsip kokoh, mandiri, dan memiliki visi tujuan hidup yang jelas.',
+      explanation: 'Anak sangat mandiri, paham kelebihan serta kekurangan dirinya, berpendirian kokoh, dan tahu cita-cita yang ingin diraih.',
     },
     {
       id: 'linguistic',
-      name: 'Kecerdasan Linguistik-Verbal',
+      name: 'Kecerdasan Bahasa & Kata (Linguistik-Verbal)',
       score: getFingerScore('R4', 3.5),
-      explanation: 'Sensitivitas tinggi terhadap struktur kalimat, artikulasi lisan, kosa kata kaya, serta daya tangkap argumentasi lisan.',
+      explanation: 'Anak pandai memilih kata, senang bercerita atau menulis, cepat menangkap isi buku bacaan, dan luwes menyampaikan pendapat.',
     },
     {
       id: 'bodily_kinesthetic',
-      name: 'Kecerdasan Kinestetik-Jasmani',
+      name: 'Kecerdasan Gerak & Keterampilan Fisik (Kinestetik)',
       score: Math.round((getFingerScore('L3', 3.2) + getFingerScore('R3', 3.2)) / 2),
-      explanation: 'Koordinasi motorik dan presisi tangan yang cekatan, responsif dalam aktivitas fisik, manipulasi alat, dan eksperimen langsung.',
+      explanation: 'Anak lincah bergerak, koordinasi tubuhnya bagus, terampil otak-atik barang atau berolahraga, dan paling cepat paham lewat praktik langsung.',
     },
     {
       id: 'musical',
-      name: 'Kecerdasan Musikal',
+      name: 'Kecerdasan Nada & Irama (Musikal)',
       score: getFingerScore('L4', 3.3),
-      explanation: 'Peka terhadap modulasi nada, intonasi suara, harmoni ritmis, dan mudah belajar dengan bantuan irama/audio.',
+      explanation: 'Anak peka terhadap ketukan nada dan musik, mudah mengingat lirik lagu, serta belajar lebih rileks dan fokus saat ditemani irama.',
     },
     {
       id: 'naturalist',
-      name: 'Kecerdasan Naturalis',
+      name: 'Kecerdasan Alam & Lingkungan (Naturalis)',
       score: Math.round((getFingerScore('L5', 3.1) + getFingerScore('R5', 3.1)) / 2),
-      explanation: 'Peka terhadap pola lingkungan alami, klasifikasi objek sains, ekosistem, dan adaptif terhadap fenomena alam.',
+      explanation: 'Anak menyayangi binatang dan tanaman, tertarik mengamati fenomena alam, dan sangat menikmati proses belajar di luar ruangan.',
     },
   ];
 
@@ -151,13 +151,13 @@ function generateFallbackPsychometricReport(
   const auditoryPct = Math.round((auditoryBase / totalVAK) * 100);
   const kinestheticPct = Math.max(0, 100 - visualPct - auditoryPct);
 
-  let dominantStyle = 'Visual';
-  if (auditoryPct > visualPct && auditoryPct >= kinestheticPct) dominantStyle = 'Auditori';
-  else if (kinestheticPct > visualPct && kinestheticPct > auditoryPct) dominantStyle = 'Kinestetik';
-  else if (Math.abs(visualPct - auditoryPct) < 5) dominantStyle = 'Visual-Auditori';
+  let dominantStyle = 'Visual (Mata)';
+  if (auditoryPct > visualPct && auditoryPct >= kinestheticPct) dominantStyle = 'Auditori (Telinga)';
+  else if (kinestheticPct > visualPct && kinestheticPct > auditoryPct) dominantStyle = 'Kinestetik (Gerak & Praktik)';
+  else if (Math.abs(visualPct - auditoryPct) < 5) dominantStyle = 'Visual-Auditori (Mata & Telinga)';
 
   // Capacity speed
-  const speedRating = tfrc > 170 ? 'Sangat Cepat' : tfrc > 130 ? 'Cepat & Adaptif' : tfrc > 100 ? 'Moderat & Stabil' : 'Metodis & Reflektif';
+  const speedRating = tfrc > 170 ? 'Sangat Cepat Menangkap' : tfrc > 130 ? 'Cepat & Lincah Adaptif' : tfrc > 100 ? 'Mantap & Stabil' : 'Cermat & Mendalam';
 
   // Career recommendations based on top intelligence
   const top1 = multipleIntelligences[0].id;
@@ -168,16 +168,16 @@ function generateFallbackPsychometricReport(
     smkSpecializations: isScience
       ? ['Rekayasa Perangkat Lunak & AI', 'Mekatronika & Robotika', 'Teknik Desain Pemodelan']
       : ['Manajemen Bisnis Digital', 'Komunikasi & Periklanan Kreatif', 'Perbankan & Akuntansi'],
-    academicReasoning: `Profil neokorteks menunjukkan kekuatan dominan pada ${multipleIntelligences[0].name} dan ${multipleIntelligences[1].name}, sangat cocok dengan model berpikir analitis berbasis proyek.`,
+    academicReasoning: `Berdasarkan bakat alaminya yang unggul pada ${multipleIntelligences[0].name} dan ${multipleIntelligences[1].name}, anak akan sangat nyaman dan mudah berprestasi bila belajar di bidang yang banyak mengasah nalar, analisis nyata, dan pemecahan masalah praktis.`,
   };
 
   const universityMajors = isScience
-    ? ['Teknik Informatika / Ilmu Komputer', 'Data Science & Artificial Intelligence', 'Arsitektur & Perencanaan Spasial', 'Teknik Biomedis', 'Fisika Terapan']
-    : ['Ilmu Hubungan Internasional', 'Manajemen & Kewirausahaan Digital', 'Ilmu Komunikasi & Media Baru', 'Psikologi Terapan', 'Hukum Bisnis'];
+    ? ['Teknik Informatika / Ilmu Komputer', 'Data Science & Artificial Intelligence', 'Arsitektur & Desain Perencanaan', 'Teknik Biomedis', 'Fisika / Matematika Terapan']
+    : ['Ilmu Hubungan Internasional', 'Manajemen Bisnis & Kewirausahaan', 'Ilmu Komunikasi & Media Digital', 'Psikologi', 'Hukum Bisnis'];
 
   const careerProfessions = isScience
-    ? ['AI Engineer / Solution Architect', 'Data Scientist', 'Desainer Produk Digital / Arsitek', 'Konsultan Teknologi', 'Peneliti R&D']
-    : ['Diplomat / Konsultan Strategi Publik', 'Manajer Operasi Bisnis', 'Creative Director', 'Spesialis Negosiasi & Kemitraan', 'Analis Kebijakan'];
+    ? ['Ahli Kecerdasan Buatan (AI) / Software Engineer', 'Data Scientist / Analis Data', 'Arsitek / Desainer Produk Kreatif', 'Konsultan Teknologi', 'Peneliti R&D']
+    : ['Diplomat / Konsultan Hubungan Publik', 'Manajer Operasi Bisnis', 'Creative Director / Produser Media', 'Spesialis Negosiasi & Kemitraan', 'Analis Kebijakan Publik'];
 
   const institution = institutionName || 'GenZi Academy';
 
@@ -188,45 +188,47 @@ MODUL MATERI PEMBELAJARAN & LAPORAN ANALISIS DMIT (ARAH)
 - Nama Klien / Siswa: ${clientIdentity?.fullName || '-'}
 - Tempat, Tanggal Lahir: ${clientIdentity?.birthPlace || '-'}, ${clientIdentity?.birthDate || '-'}
 - Usia Saat Asesmen: ${clientIdentity?.ageYears || 0} Tahun ${clientIdentity?.ageMonths || 0} Bulan
-- Total Ridge Count (TFRC): ${tfrc} Garis (${speedRating})
+- Daya Tangkap Otak (TFRC): ${tfrc} Garis (${speedRating})
 - Lembaga Pelaksana: ${institution}
 
-## A. Dominasi Belahan Otak (Brain Dominance)
-- Otak Kiri: ${leftBrainPct}% (Analitis, Sekuensial, Logika, Bahasa)
-- Otak Kanan: ${rightBrainPct}% (Kreativitas, Visi, Emosi, Spasial)
-Analisis: ${leftBrainPct > rightBrainPct ? 'Siswa memiliki kecenderungan pemikiran analitis yang sistematis dan menyukai langkah pembuktian logis.' : 'Siswa memiliki kecenderungan pemikiran konseptual dan intuitif yang kaya dengan ide orisinal.'}
-*Kesimpulan Bagian*: Siswa beroperasi paling efektif ketika ide kreatif (Otak Kanan) diwadahi dalam target dan jadwal aksi terstruktur (Otak Kiri).
+## A. Cara Berpikir Alami: Belahan Otak Kiri vs Kanan
+- Belahan Otak Kiri (Teratur, Logis, Fakta): ${leftBrainPct}%
+- Belahan Otak Kanan (Kreatif, Penuh Ide, Imajinasi): ${rightBrainPct}%
+- Analisis Sederhana: ${leftBrainPct > rightBrainPct ? 'Anak cenderung berpikir teratur, rapi, menyukai fakta dan alasan logis sebelum bertindak.' : 'Anak kaya akan ide-ide segar di luar kebiasaan, menyukai hal kreatif/visual, dan cepat menangkap situasi secara menyeluruh.'}
+*Kesimpulan Bagian A*: Cara terbaik membimbing anak adalah memadukan ide kreatifnya (${rightBrainPct}%) dengan jadwal belajar harian yang teratur (${leftBrainPct}%).
 
-## B. 8 Kecerdasan Majemuk (Multiple Intelligences)
-${multipleIntelligences.map((m) => `${m.rank}. **${m.name}** (${m.score}%) - *${m.strengthLevel}*: ${m.explanation}`).join('\n')}
-*Kesimpulan Bagian*: Kombinasi dua kecerdasan teratas (${multipleIntelligences[0].name} dan ${multipleIntelligences[1].name}) merupakan aset bawaan terbesar siswa yang harus menjadi poros utama dalam memilih mata pelajaran dan kegiatan ekstrakurikuler.
+## B. 8 Bakat Kecerdasan Alami Anak (Multiple Intelligences)
+${multipleIntelligences.map((m) => `${m.rank}. **${m.name}** (${m.score}%) - *Tingkat: ${m.strengthLevel}*\n   Arti Sederhana: ${m.explanation}`).join('\n')}
+*Kesimpulan Bagian B*: Dua kecerdasan teratas (${multipleIntelligences[0].name} dan ${multipleIntelligences[1].name}) adalah bakat alami terkuat anak yang dapat menjadi poros utama meraih prestasi.
 
-## C. Gaya Belajar Alami (VAK Profil)
-- Visual: ${visualPct}% | Auditori: ${auditoryPct}% | Kinestetik: ${kinestheticPct}%
-- Gaya Belajar Dominan: **${dominantStyle}**
-- **Strategi Guru**: Sajikan materi menggunakan mind-map terstruktur, studi kasus visual, dan diskusi interaktif bertahap.
-- **Strategi Siswa**: Gunakan stabilo berwarna, buat rangkuman diagram alur, dan pelajari materi dalam sesi fokus 25 menit.
-*Kesimpulan Bagian*: Retensi belajar melonjak drastis saat materi disajikan melalui rangsangan sensorik ${dominantStyle}.
+## C. Gaya Belajar Paling Nyaman (VAK Profil)
+- Visual (Lewat Mata/Gambar): ${visualPct}%
+- Auditori (Lewat Telinga/Mendengar): ${auditoryPct}%
+- Kinestetik (Lewat Gerak/Praktik Langsung): ${kinestheticPct}%
+- Gaya Belajar Utama: **${dominantStyle}**
+- **Tips Guru**: Sajikan materi pelajaran dengan bahasa sederhana, gunakan diagram/gambar warna, dan hubungkan dengan contoh nyata sehari-hari.
+- **Tips Siswa & Orang Tua**: Gunakan stabilo warna-warni, buat peta konsep (mind-map) sendiri, dan terapkan sesi belajar fokus 25 menit diselingi jeda santai 5 menit.
+*Kesimpulan Bagian C*: Belajar menjadi sangat ringan dan cepat paham saat materi disajikan sesuai gaya belajar alami ${dominantStyle}.
 
-## D. Karakteristik & Gaya Berpikir
-- Profil Kepribadian: **${leftBrainPct > 50 ? 'Visioner Analitis & Terencana' : 'Kreatif Eksploratif & Dinamis'}**
-- Pengambilan Keputusan: Berbasis data dan pertimbangan sebab-akibat yang matang.
-- Respon Tekanan: Membutuhkan ruang jeda reflektif untuk memetakan kembali skala prioritas.
-*Kesimpulan Bagian*: Komunikasi apresiatif dan kejelasan ekspektasi tugas akan memaksimalkan stabilitas emosi siswa.
+## D. Karakter Alami & Gaya Belajar Sehari-Hari
+- Profil Karakter: **${leftBrainPct > 50 ? 'Tipe Pemikir Rapi & Terencana (Suka Keteraturan)' : 'Tipe Kreator Lincah & Dinamis (Kaya Ide Baru)'}**
+- Cara Mengambil Keputusan: Tenang, menimbang fakta nyata, dan memikirkan akibatnya secara matang.
+- Saat Lelah / Tugas Sulit: Perlu jeda santai sejenak untuk memilah tugas mana yang perlu diselesaikan satu per satu.
+*Kesimpulan Bagian D*: Komunikasi yang hangat, pujian atas usahanya, dan arahan yang jelas akan memaksimalkan semangat belajar anak.
 
-## E. Kapasitas Pembelajaran (TFRC: ${tfrc} Garis)
-TFRC ${tfrc} mencerminkan kecepatan pemrosesan informasi kategori **${speedRating}**. Daya tahan konsentrasi tinggi bila diselaraskan dengan minat topik utamanya.
-*Kesimpulan Bagian*: Disarankan menggunakan ritme belajar interval (metode Pomodoro 25-30 menit) untuk menjaga stamina kognitif prima.
+## E. Daya Tangkap Otak (TFRC: ${tfrc} Garis)
+Nilai TFRC ${tfrc} garis mencerminkan kecepatan penyerapan materi kategori **${speedRating}**.
+*Kesimpulan Bagian E*: Anak tidak perlu dipaksa belajar berjam-jam tanpa henti; belajar rutin 30-45 menit sehari dengan suasana nyaman sudah sangat efektif.
 
-## F. Rekomendasi Pendidikan & Karier
-1. **Rekomendasi Penjurusan**: ${highSchoolRecommendation.recommendedTrack}
-2. **Program Studi Kuliah Ideal**:
+## F. Rekomendasi Pilihan Sekolah, Kuliah, & Cita-Cita Masa Depan
+1. **Pilihan Sekolah (SMA/SMK)**: ${highSchoolRecommendation.recommendedTrack}
+2. **Pilihan Jurusan Kuliah Ideal**:
 ${universityMajors.map((maj) => `   - ${maj}`).join('\n')}
-3. **Karier Masa Depan**: ${careerProfessions.join(', ')}
-*Kesimpulan Bagian*: Jalur studi di bidang ${isScience ? 'Sains, Teknologi, dan Desain Sistem' : 'Sosial-Humaniora, Komunikasi, dan Bisnis'} memberikan tingkat kepuasan dan pencapaian prestasi tertinggi.
+3. **Peluang Karier Masa Depan**: ${careerProfessions.join(', ')}
+*Kesimpulan Bagian F*: Pilihan jalur pendidikan dan karier ini memberikan keselarasan sempurna antara bakat alami anak dan masa depannya.
 
-## G. Kesimpulan Umum & Rekomendasi Holistik
-Siswa memiliki profil unik dengan keunggulan ${multipleIntelligences[0].name} dan kapasitas TFRC ${tfrc} garis. Kolaborasi sinergis antara pendampingan orang tua di rumah dan guru di sekolah akan membuka potensi terbaiknya.
+## G. Kesimpulan Umum & Panduan Pendampingan Anak Hebat
+Anak memiliki potensi istimewa pada ${multipleIntelligences[0].name} dan daya tangkap ${tfrc} garis. Kolaborasi penuh kasih sayang antara orang tua di rumah dan guru di sekolah akan membimbing anak meraih masa depan yang gemilang.
 
 ---
 Diverifikasi & Ditetapkan di Depok,
@@ -237,74 +239,77 @@ GenZi Academy by. Pak GuruAI`;
     brainDominance: {
       leftPercentage: leftBrainPct,
       rightPercentage: rightBrainPct,
-      summary: `Dominasi belahan otak ${leftBrainPct >= rightBrainPct ? 'Otak Kiri' : 'Otak Kanan'} (${Math.max(leftBrainPct, rightBrainPct)}%).`,
-      detail: `Keseimbangan neokorteks menunjukkan proporsi ${leftBrainPct}% kiri dan ${rightBrainPct}% kanan yang mendukung pemikiran seimbang antara analisis fakta dan daya cipta.`,
-      sectionConclusion: `Siswa memiliki gaya berpikir ${leftBrainPct > rightBrainPct ? 'analitis-deduktif yang mengutamakan pembuktian logis dan data' : 'konseptual-intuitif yang mengutamakan inovasi dan visi besar'}. Pendekatan terbaik adalah menyelaraskan ide kreatif dengan rencana eksekusi terukur.`,
+      summary: leftBrainPct >= rightBrainPct ? 'Lebih Dominan Otak Kiri (Cenderung Teratur, Rapi, & Suka Fakta)' : 'Lebih Dominan Otak Kanan (Cenderung Kreatif, Penuh Ide, & Imajinatif)',
+      detail: leftBrainPct >= rightBrainPct
+        ? 'Dalam kehidupan sehari-hari, anak lebih menyukai aturan yang jelas, langkah-langkah yang rapi dan teratur, serta ingin tahu alasan yang masuk akal sebelum mengerjakan sesuatu.'
+        : 'Dalam kehidupan sehari-hari, anak memiliki daya imajinasi tinggi, kaya akan ide-ide segar di luar kebiasaan, menyukai hal-hal visual atau seni, dan mudah memahami situasi secara menyeluruh.',
+      sectionConclusion: `Cara terbaik membimbing anak adalah memadukan ide-ide kreatifnya (${rightBrainPct}%) dengan jadwal belajar harian yang teratur dan bertahap (${leftBrainPct}%).`,
     },
     multipleIntelligences,
-    multipleIntelligencesConclusion: `Kekuatan super siswa terletak pada sinergi ${multipleIntelligences[0].name} (${multipleIntelligences[0].score}%) dan ${multipleIntelligences[1].name} (${multipleIntelligences[1].score}%). Pembelajaran berbasis proyek (Project-Based Learning) yang mengeksplorasi dua domain ini akan memicu motivasi intrinsik tertinggi.`,
+    multipleIntelligencesConclusion: `Dua kecerdasan teratas (${multipleIntelligences[0].name} dan ${multipleIntelligences[1].name}) adalah bakat alami terkuat anak. Kembangkan dua bidang ini lewat pilihan pelajaran, hobi, dan ekstrakurikuler agar anak makin percaya diri dan berprestasi.`,
     learningStyleVAK: {
       visual: visualPct,
       auditory: auditoryPct,
       kinesthetic: kinestheticPct,
       dominantStyle,
-      explanation: `Anak menyerap informasi paling optimal lewat pendekatan ${dominantStyle}.`,
+      explanation: `Anak paling cepat dan mudah memahami pelajaran lewat gaya belajar ${dominantStyle}. Daya ingat dan semangat belajarnya akan meningkat drastis saat cara belajar disesuaikan dengan gaya ini.`,
       teacherStrategies: [
-        'Gunakan peta konsep (mind-map) dan rangkuman visual berwarna.',
-        'Berikan waktu untuk eksplorasi studi kasus dan tanya jawab mandiri.',
-        'Hindari ceramah satu arah yang monoton tanpa visualisasi visual/diagram.',
+        'Jelaskan materi pelajaran dengan bahasa sederhana dan hubungkan langsung dengan contoh nyata sehari-hari.',
+        'Gunakan gambar, bagan warna, atau video pendek agar konsep pelajaran langsung terbayang di pikiran anak.',
+        'Ajak anak berdiskusi singkat atau minta ia menceritakan kembali pemahamannya dengan kata-katanya sendiri.',
       ],
       studentStrategies: [
-        'Gunakan flashcards atau catatan visual dengan highlighter warna-warni.',
-        'Jelaskan kembali materi kepada orang tua atau teman untuk memperkuat retensi memori.',
-        'Buat jadwal belajar berinterval pendek dengan jeda istirahat aktif.',
+        'Gunakan stabilo warna-warni untuk menandai bagian buku yang penting agar mata langsung fokus pada intinya.',
+        'Buat catatan ringkas berupa peta pikiran (mind map) atau bagan pohon dengan tulisan tangan sendiri.',
+        'Terapkan waktu belajar yang nyaman: belajar fokus 25 menit, lalu istirahat santai 5 menit sebelum lanjut lagi.',
       ],
-      sectionConclusion: `Modalitas sensorik utama siswa adalah ${dominantStyle} (${Math.max(visualPct, auditoryPct, kinestheticPct)}%). Mengintegrasikan media ${dominantStyle === 'Visual' ? 'diagram, infografis, dan video' : dominantStyle === 'Auditori' ? 'diskusi lisan, rekaman suara, dan analogi cerita' : 'simulasi praktik dan manipulasi objek nyata'} akan melipatgandakan daya serap pelajaran hingga 2-3 kali lipat.`,
+      sectionConclusion: `Setiap anak punya pintu masuk informasi yang berbeda. Dengan mendukung gaya belajar ${dominantStyle}, belajar tidak lagi menjadi beban, melainkan kegiatan yang seru dan mudah dipahami.`,
     },
     personalityAndThinking: {
-      primaryType: leftBrainPct > 52 ? 'Visioner Analitis' : rightBrainPct > 52 ? 'Kreatif Eksploratif' : 'Seimbang & Adaptif',
+      primaryType: leftBrainPct > 52 ? 'Tipe Pemikir Rapi & Terencana (Suka Keteraturan)' : rightBrainPct > 52 ? 'Tipe Kreator Lincah & Dinamis (Kaya Ide Baru)' : 'Tipe Seimbang & Mudah Beradaptasi',
       coreCharacteristics: [
-        'Fokus pada pencapaian tujuan akhir',
-        'Daya analisis terstruktur & mandiri',
-        'Sensitif terhadap keadilan & kejelasan aturan',
-        'Cepat beradaptasi dalam lingkungan yang suportif',
+        'Memiliki rasa ingin tahu yang besar dan senang bertanya "mengapa" serta "bagaimana"',
+        'Tekun dan merasa puas bila bisa menyelesaikan tugas sampai tuntas dengan rapi',
+        'Paling bersemangat belajar di lingkungan yang tenang, saling menghargai, dan jelas tujuannya',
+        'Mampu belajar mandiri saat materi yang dipelajari menarik minat dan rasa penasarannya',
       ],
-      decisionMakingStyle: 'Mengumpulkan fakta dan alternatif solusi sebelum menetapkan pilihan akhir.',
-      stressResponse: 'Cenderung butuh waktu jeda sejenak untuk menata ulang strategi saat menghadapi situasi ambigu.',
-      communicationStyle: 'Lugas, jelas, dan mengutamakan substansi yang bermakna.',
-      sectionConclusion: `Karakter utama siswa mencerminkan pribadi ${leftBrainPct > 52 ? 'terencana dan membutuhkan kejelasan target' : 'eksploratif yang menyukai kebebasan ide'}. Hindari kritik di depan umum; gunakan dialog empatik berbasis solusi untuk menjaga motivasi dan rasa percaya dirinya.`,
+      decisionMakingStyle: 'Mengambil keputusan dengan tenang, menimbang fakta nyata, dan memikirkan akibatnya secara matang.',
+      stressResponse: 'Bila tugas terasa menumpuk atau lelah, anak butuh waktu jeda santai sejenak, lalu dibantu memilah tugas mana yang perlu diselesaikan satu per satu.',
+      communicationStyle: 'Suka diajak bicara secara jujur, ramah, tidak digurui, dan diberi ruang untuk menyampaikan pendapatnya secara leluasa.',
+      sectionConclusion: 'Kunci utama membangkitkan semangat anak adalah komunikasi yang hangat, pujian atas usahanya (bukan hanya hasil akhir), dan arahan yang jelas serta tidak berbelit-belit.',
     },
     learningCapacityTFRC: {
       tfrcValue: tfrc,
       speedRating,
-      analysis: `Total Ridge Count ${tfrc} garis mengindikasikan kepadatan jaringan neuron korteks kategori ${speedRating}, memungkinkan akselerasi penyerapan materi baru dengan pembiasaan ritmis.`,
+      analysis: `Nilai TFRC (${tfrc} garis) menggambarkan daya tampung memori alami dan kecepatan otak anak dalam menyerap pelajaran baru. Pada kategori "${speedRating}", anak memiliki kapasitas otak yang sangat baik untuk belajar berbagai materi sekolah.`,
       capacityCategory: tfrc > 150 ? 'Tinggi' : 'Moderat-Tinggi',
-      sectionConclusion: `Dengan TFRC ${tfrc} garis (${speedRating}), kapasitas pemrosesan otak anak sangat mumpuni. Kunci keberhasilan bukan durasi belajar maraton, melainkan konsistensi belajar harian 30-45 menit yang berkualitas tinggi.`,
+      sectionConclusion: `Dengan daya tangkap otak sebesar ${tfrc} garis (${speedRating}), anak tidak perlu dipaksa belajar berjam-jam tanpa henti. Cukup belajar rutin 30–45 menit setiap hari dengan suasana nyaman, hasilnya akan jauh lebih maksimal.`,
     },
     quotientOrientation: {
       iq: Math.min(35, Math.max(20, Math.round((leftBrainPct / 100) * 32 + 10))),
       eq: Math.min(35, Math.max(20, Math.round((rightBrainPct / 100) * 30 + 12))),
       aq: 25,
       cq: Math.min(35, Math.max(18, Math.round((rightBrainPct / 100) * 28 + 10))),
-      explanation: 'Distribusi kuadran kecerdasan menunjukkan potensi seimbang antara IQ (intelektual) dan EQ (kecerdasan emosional).',
+      explanation: 'Potensi kecerdasan anak terbagi seimbang antara IQ (daya nalar & logika), EQ (kepekaan emosi & empati), AQ (ketahanan mental saat menghadapi kesulitan), dan CQ (kreativitas ide baru).',
     },
     educationalCareerRecommendations: {
       highSchoolRecommendation,
       universityMajors,
       careerProfessions,
-      developmentAdvice: 'Kembangkan portofolio karya nyata sejak dini, ikuti kompetisi minat bakat, dan dampingi dengan komunikasi keluarga yang terbuka.',
-      sectionConclusion: `Rekomendasi penjurusan ${highSchoolRecommendation.recommendedTrack} dan jalur perguruan tinggi ${universityMajors.slice(0, 2).join(', ')} memberikan keselarasan sempurna antara bakat alami bawaan dan tuntutan profesi masa depan.`,
+      developmentAdvice: 'Beri anak kesempatan mengikuti kegiatan atau ekstrakurikuler yang disukainya, fasilitasi bacaan pendukung, dan jalin komunikasi santai setiap hari mengenai hal-hal seru yang ia pelajari di sekolah.',
+      sectionConclusion: `Pilihan jalur pendidikan ${highSchoolRecommendation.recommendedTrack} dan jurusan kuliah ${universityMajors.slice(0, 2).join(', ')} sangat cocok dengan bakat bawaan anak, sehingga masa depan belajarnya menjadi lebih terarah, ringan dijalani, dan membanggakan.`,
     },
     overallExecutiveSummary: {
-      coreIdentity: `Anak memiliki profil keunggulan genetik berbasis ${multipleIntelligences[0].name} dengan dominasi ${leftBrainPct >= rightBrainPct ? 'Otak Kiri' : 'Otak Kanan'} dan modalitas gaya belajar ${dominantStyle}. Karakter alaminya mandiri, cepat menangkap konsep baru, dan berorientasi pada pencapaian hasil nyata.`,
-      winningFormula: `Gunakan metode belajar ${dominantStyle} terstruktur, fokuskan eksplorasi pada bidang ${isScience ? 'Sains & Teknologi' : 'Komunikasi & Humaniora'}, serta berikan ruang otonomi terkontrol dalam pengerjaan tugas sekolah.`,
+      coreIdentity: `Anak memiliki bakat alami istimewa pada ${multipleIntelligences[0].name}, didukung cara berpikir yang ${leftBrainPct >= rightBrainPct ? 'teratur dan logis' : 'kreatif dan banyak ide'}, serta gaya belajar yang mengandalkan ${dominantStyle}. Pada dasarnya, anak adalah sosok yang cerdas, punya rasa ingin tahu tinggi, dan ingin memberikan hasil terbaik bila diarahkan dengan tepat.`,
+      winningFormula: `Gunakan cara belajar berbasis ${dominantStyle}, berikan arahan tugas yang jelas tanpa terlalu banyak tekanan, fokuskan pada minat di bidang ${isScience ? 'Sains, Teknologi, dan Eksplorasi Nyata' : 'Komunikasi, Sosial, dan Kreativitas'}, serta berikan apresiasi yang tulus setiap kali ia berusaha keras.`,
       parentTeacherActionPlan: [
-        `Dampingi anak belajar dengan media ${dominantStyle} (diagram visual, mind-map, atau diskusi tanya-jawab terarah).`,
-        `Dukung partisipasi dalam klub atau olimpiade yang mengasah ${multipleIntelligences[0].name} dan ${multipleIntelligences[1].name}.`,
-        `Jaga ritme belajar dengan jeda istirahat aktif untuk mencegah kelelahan mental sesuai kapasitas TFRC (${tfrc} garis).`,
-        `Arahkan pemilihan mata pelajaran peminatan SMA/SMK sesuai rekomendasi (${highSchoolRecommendation.recommendedTrack}).`,
+        `Dampingi anak belajar dengan cara yang ia sukai (${dominantStyle}), misalnya menggunakan gambar warna, video edukatif, atau mengajak berdiskusi santai.`,
+        `Dukung minat dan bakat anak pada ${multipleIntelligences[0].name} dengan memberinya wadah seperti buku menarik, klub sekolah, atau lomba yang menyenangkan.`,
+        `Atur jadwal istirahat yang cukup di sela-sela belajar (setiap 25–30 menit belajar fokus, beri jeda santai 5 menit) agar otak tidak cepat lelah.`,
+        `Ketika nilai atau hasil tugasnya belum sempurna, beri semangat dan bantu cari letak kesalahannya bersama-sama, tanpa membanding-bandingkannya dengan orang lain.`,
+        `Arahkan pemilihan jurusan sekolah (SMA/SMK) dan cita-cita masa depan sesuai rekomendasi bakat alaminya (${highSchoolRecommendation.recommendedTrack}) agar belajarnya selalu terasa menyenangkan.`,
       ],
-      counselorNote: `Potensi bawaan adalah benih unggul; lingkungan belajar yang positif dan dukungan keluarga yang penuh apresiasi adalah tanah subur yang akan membuatnya bertumbuh menjadi prestasi gemilang di masa depan.`,
+      counselorNote: `Setiap anak terlahir dengan benih kehebatan masing-masing. Bakat bawaan ini adalah kompas penunjuk jalan. Dengan kasih sayang orang tua dan bimbingan guru yang tepat, anak pasti akan tumbuh menjadi pribadi yang mandiri, percaya diri, dan meraih sukses gemilang.`,
     },
     comprehensiveMarkdownReport,
   };
@@ -498,65 +503,68 @@ Perhitungan Sementara TFRC: ${calculatedMetrics?.tfrc || 0}
 Jumlah Jari Missing: ${calculatedMetrics?.missingCount || 0}
 `;
 
-    const systemInstruction = `Kamu adalah Ahli Psikometrik dan Analis Utama untuk aplikasi ARAH (Analisa Rahasia Anak Hebat) dengan slogan "Beri ARAH Pasti untuk Masa Depannya."
-Tugasmu adalah menganalisis data identitas dan pola sidik jari klien untuk menghasilkan laporan komprehensif, rinci, dan mudah dimengerti.
-Gunakan bahasa Indonesia yang profesional, memotivasi, dan mudah dipahami oleh pendidik, orang tua, dan anak.
-Footer resmi laporan harus mencantumkan: "GenZi Academy by. Pak GuruAI".
-Output harus dalam format JSON murni yang valid tanpa awalan markdown seperti \`\`\`json.`;
+    const systemInstruction = `Kamu adalah Konselor & Pakar Pengembangan Potensi Anak untuk aplikasi ARAH (Analisa Rahasia Anak Hebat) dengan slogan "Beri ARAH Pasti untuk Masa Depannya."
+Tugasmu adalah menganalisis data identitas dan sidik jari klien untuk menghasilkan laporan yang mudah dipahami, hangat, memotivasi, dan langsung bisa dipraktikkan.
+PANDUAN BAHASA:
+- Gunakan bahasa Indonesia yang SANGAT MUDAH DIPAHAMI oleh SEMUA ORANG (termasuk orang tua, guru, dan siswa).
+- Hindari jargon atau istilah medis/psikologi yang rumit. Pakai analogi sederhana dan penjelasan ramah sehari-hari.
+- Setiap poin harus memberi gambaran jelas mengenai bakat anak, cara belajar terbaik, serta langkah pendampingan yang menyenangkan.
+- Footer resmi laporan harus mencantumkan: "GenZi Academy by. Pak GuruAI".
+- Output harus dalam format JSON murni yang valid tanpa awalan markdown seperti \`\`\`json.`;
 
     const promptText = `Lakukan analisis psikometrik DMIT lengkap untuk data klien berikut:
 ${clientDataSummary}
 
-Berikan analisis terstruktur dalam format JSON dengan properti yang lengkap, mendalam, dan rinci:
+Berikan analisis terstruktur dalam format JSON dengan bahasa yang sangat ramah, jelas, dan mudah dipahami oleh orang tua:
 1. "brainDominance": {
      "leftPercentage": number,
      "rightPercentage": number,
-     "summary": string (ringkasan gaya berpikir),
-     "detail": string (analisis mendalam fungsi belahan otak),
-     "sectionConclusion": string (kesimpulan narasi khusus untuk bagian dominasi belahan otak)
+     "summary": string (misal: "Dominan Otak Kiri: Logis & Teratur" atau "Dominan Otak Kanan: Kreatif & Penuh Ide" atau "Seimbang Kiri & Kanan"),
+     "detail": string (penjelasan ramah tentang cara berpikir anak sehari-hari),
+     "sectionConclusion": string (kesimpulan bahasa sederhana tentang kekuatan berpikir anak)
    }
-2. "multipleIntelligences": array of 8 objects (linguistic, logical_mathematical, spatial, bodily_kinesthetic, musical, interpersonal, intrapersonal, naturalist) dengan rank 1-8, score (skor 40-98), strengthLevel, explanation rinci,
-   "multipleIntelligencesConclusion": string (kesimpulan narasi kombinasi kekuatan utama kecerdasan majemuk)
+2. "multipleIntelligences": array of 8 objects (linguistic, logical_mathematical, spatial, bodily_kinesthetic, musical, interpersonal, intrapersonal, naturalist) dengan rank 1-8, score (skor 40-98), strengthLevel, explanation ramah dan mudah dipahami tentang bakat nyata anak dan cara mengasahnya,
+   "multipleIntelligencesConclusion": string (kesimpulan ringkas bakat utama anak dan mengapa itu hebat)
 3. "learningStyleVAK": {
      "visual": number,
      "auditory": number,
      "kinesthetic": number,
      "dominantStyle": string,
-     "explanation": string rinci,
-     "teacherStrategies": array of strings (3-4 strategi kelas),
-     "studentStrategies": array of strings (3-4 strategi belajar rumah),
-     "sectionConclusion": string (kesimpulan narasi modalitas belajar optimal)
+     "explanation": string (penjelasan sederhana cara anak paling cepat paham saat belajar),
+     "teacherStrategies": array of strings (3-4 tips praktis untuk guru di kelas),
+     "studentStrategies": array of strings (3-4 tips praktis untuk orang tua di rumah),
+     "sectionConclusion": string (kesimpulan gaya belajar terbaik anak)
    }
 4. "personalityAndThinking": {
      "primaryType": string,
-     "coreCharacteristics": array of strings,
-     "decisionMakingStyle": string,
-     "stressResponse": string,
-     "communicationStyle": string,
-     "sectionConclusion": string (kesimpulan narasi gaya kepribadian dan pendekatan emosional)
+     "coreCharacteristics": array of strings (sifat-sifat positif anak),
+     "decisionMakingStyle": string (cara anak mengambil keputusan),
+     "stressResponse": string (apa yang dirasakan saat tertekan dan cara menenangkannya),
+     "communicationStyle": string (cara komunikasi yang disukai anak),
+     "sectionConclusion": string (tips komunikasi efektif bagi orang tua)
    }
 5. "learningCapacityTFRC": {
      "tfrcValue": number,
      "speedRating": string,
-     "analysis": string,
+     "analysis": string (penjelasan sederhana tentang daya serap dan stamina fokus belajar anak),
      "capacityCategory": string,
-     "sectionConclusion": string (kesimpulan narasi kapasitas memori dan stamina belajar)
+     "sectionConclusion": string (saran ritme belajar harian yang nyaman)
    }
-6. "quotientOrientation": { "iq": number, "eq": number, "aq": number, "cq": number, "explanation": string }
+6. "quotientOrientation": { "iq": number, "eq": number, "aq": number, "cq": number, "explanation": string (penjelasan sederhana tentang kecerdasan logika (IQ), kecerdasan emosi (EQ), ketangguhan hadapi tantangan (AQ), dan daya kreatif (CQ)) }
 7. "educationalCareerRecommendations": {
-     "highSchoolRecommendation": { "recommendedTrack": string, "smkSpecializations": array of strings, "academicReasoning": string },
-     "universityMajors": array of strings (3-5 jurusan kuliah ideal),
-     "careerProfessions": array of strings (4-6 profesi masa depan),
-     "developmentAdvice": string,
-     "sectionConclusion": string (kesimpulan narasi arah studi dan karier)
+     "highSchoolRecommendation": { "recommendedTrack": string, "smkSpecializations": array of strings, "academicReasoning": string (alasan ramah mengapa jalur ini cocok) },
+     "universityMajors": array of strings (3-5 jurusan kuliah ideal yang prospektif),
+     "careerProfessions": array of strings (4-6 profesi masa depan yang cocok dengan bakatnya),
+     "developmentAdvice": string (nasihat pengembangan potensi),
+     "sectionConclusion": string (kesimpulan masa depan anak)
    }
 8. "overallExecutiveSummary": {
-     "coreIdentity": string (rangkuman profil otentik anak secara utuh),
-     "winningFormula": string (formula sukses belajar anak),
-     "parentTeacherActionPlan": array of strings (3-5 langkah aksi nyata kolaborasi orang tua dan sekolah),
-     "counselorNote": string (catatan motivasi penutup dari Konselor GenZi Academy)
+     "coreIdentity": string (rangkuman keunikan dan potensi emas anak yang membanggakan),
+     "winningFormula": string (kunci sukses belajar anak dalam 1-2 kalimat mudah diingat),
+     "parentTeacherActionPlan": array of strings (3-5 langkah nyata orang tua dan guru dalam mendampingi anak),
+     "counselorNote": string (pesan hangat dan menyemangati dari Konselor)
    }
-9. "comprehensiveMarkdownReport": string (Laporan lengkap dalam format Markdown/HTML terstruktur rapi untuk dicetak, dengan judul "${resolvedInstitution} - ARAH: LAPORAN ANALISA RAHASIA ANAK HEBAT", sub-judul "Beri ARAH Pasti untuk Masa Depannya.", pembagian bab A sampai G, kesimpulan umum di akhir bab, tanda tangan "Diverifikasi & Ditetapkan di Depok, Konselor GenZi Academy", dan penutup copyright "GenZi Academy by. Pak GuruAI")
+9. "comprehensiveMarkdownReport": string (Laporan lengkap bahasa mudah dipahami, berstruktur rapi siap cetak A4, judul "${resolvedInstitution} - ARAH: LAPORAN ANALISA RAHASIA ANAK HEBAT", sub-judul "Beri ARAH Pasti untuk Masa Depannya.", pembagian bab A sampai G dengan bahasa santun, tanda tangan "Diverifikasi & Ditetapkan di Depok, Konselor GenZi Academy", dan penutup "@Copyright by. Pak GuruAI")
 `;
 
     let parsedResult = null;
