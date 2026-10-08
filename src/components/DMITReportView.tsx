@@ -29,6 +29,7 @@ import {
   Download,
   FileDown,
 } from 'lucide-react';
+import { generateA4HtmlReport } from '../utils/generateA4HtmlReport';
 
 interface DMITReportViewProps {
   analysis: DMITAnalysisResult;
@@ -60,37 +61,22 @@ export const DMITReportView: React.FC<DMITReportViewProps> = ({
   };
 
   const handleDownloadHtml = () => {
-    const reportElement = document.getElementById('printable-report-document');
-    if (!reportElement) return;
-
-    const htmlContent = `<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Laporan Hasil Analisis ARAH DMIT - ${client.fullName || 'Siswa'}</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <style>
-    @media print {
-      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-      body { background-color: #ffffff !important; font-size: 11pt !important; }
-      section { page-break-inside: avoid; break-inside: avoid; }
-      @page { size: A4 portrait; margin: 1.2cm; }
-    }
-  </style>
-</head>
-<body class="bg-slate-100 p-4 sm:p-8 font-sans antialiased text-slate-900">
-  <div class="max-w-4xl mx-auto bg-white p-6 sm:p-10 rounded-3xl shadow-xl border border-slate-200">
-    ${reportElement.innerHTML}
-  </div>
-</body>
-</html>`;
+    // Generate pristine, self-contained standalone A4 HTML document with zero external dependencies
+    const htmlContent = generateA4HtmlReport({
+      analysis,
+      client,
+      fingerprints,
+      metrics,
+      institutionName,
+      examinerName,
+      copyrightFooter,
+    });
 
     const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Laporan_DMIT_ARAH_${(client.fullName || 'Siswa').replace(/\s+/g, '_')}.html`;
+    link.download = `Laporan_DMIT_ARAH_${(client.fullName || 'Siswa').replace(/\s+/g, '_')}_A4.html`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -287,11 +273,11 @@ export const DMITReportView: React.FC<DMITReportViewProps> = ({
 
           <button
             onClick={handleDownloadHtml}
-            title="Unduh laporan mandiri dalam format web (.html) bersih"
+            title="Unduh laporan mandiri dalam format berkas web (.html) siap cetak kertas A4 yang bersih dan rapi"
             className="px-3.5 py-2 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl shadow-xs transition flex items-center space-x-1.5 cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 text-indigo-600" />
-            <span>Unduh HTML</span>
+            <span>Unduh HTML (Format A4)</span>
           </button>
 
           <button
@@ -305,21 +291,21 @@ export const DMITReportView: React.FC<DMITReportViewProps> = ({
 
           <button
             onClick={handlePrint}
-            title="Cetak langsung atau pilih 'Save as PDF' di peramban"
+            title="Cetak langsung ke kertas A4 atau pilih 'Save as PDF' di jendela peramban"
             className="px-4 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl shadow-xs transition flex items-center space-x-1.5 cursor-pointer"
           >
             <Printer className="w-3.5 h-3.5" />
-            <span>Cetak / Simpan PDF</span>
+            <span>Cetak / Simpan PDF (A4)</span>
           </button>
         </div>
       </div>
 
       {/* Helper Notification for PDF & Download (Screen Only) */}
-      <div className="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-3 px-4 text-xs text-indigo-900 flex items-center justify-between print:hidden">
-        <div className="flex items-center space-x-2">
+      <div className="bg-indigo-50/70 border border-indigo-200/80 rounded-2xl p-3 px-4 text-xs text-indigo-950 flex items-center justify-between print:hidden shadow-2xs">
+        <div className="flex items-center space-x-2.5">
           <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
           <span>
-            <strong>Format Unduhan Bersih:</strong> Klik <strong>Cetak / Simpan PDF</strong> lalu pilih opsi <em>&quot;Save as PDF&quot;</em> untuk file PDF resmi, atau gunakan tombol <strong>Unduh HTML</strong> / <strong>Unduh Word</strong> untuk arsip mandiri.
+            <strong>Format Laporan Kertas A4 Bersih &amp; Rapi:</strong> Klik tombol <strong>Cetak / Simpan PDF (A4)</strong> lalu pilih opsi tujuan <em>&quot;Save as PDF&quot;</em> pada peramban untuk hasil cetak A4 presisi, atau klik <strong>Unduh HTML (Format A4)</strong> untuk berkas mandiri bebas internet yang siap dicetak kapan saja.
           </span>
         </div>
       </div>
@@ -1007,7 +993,7 @@ export const DMITReportView: React.FC<DMITReportViewProps> = ({
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white space-y-6 shadow-xl">
+          <div className="bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white space-y-6 shadow-xl executive-summary-print print-avoid-break">
             {/* 1. Core Identity */}
             <div className="space-y-1.5 border-b border-white/10 pb-4">
               <span className="text-[11px] font-bold uppercase tracking-wider text-teal-300 flex items-center">
@@ -1062,7 +1048,7 @@ export const DMITReportView: React.FC<DMITReportViewProps> = ({
         </section>
 
         {/* OFFICIAL SIGNATURE AND VALIDATION STAMP */}
-        <div className="pt-8 border-t-2 border-slate-200 grid grid-cols-2 gap-8 text-xs text-center">
+        <div className="pt-8 border-t-2 border-slate-200 grid grid-cols-2 gap-8 text-xs text-center print-avoid-break">
           <div>
             <p className="text-slate-400">Mengetahui,</p>
             <p className="font-bold text-slate-800 mt-0.5">Orang Tua / Wali Siswa</p>

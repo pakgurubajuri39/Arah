@@ -5,14 +5,33 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  body {
+  
+  html, body, #root, main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
     background-color: #ffffff !important;
     color: #0f172a !important;
-    font-size: 11pt !important;
+    font-size: 10pt !important;
+    line-height: 1.4 !important;
+    overflow: visible !important;
   }
-  header, nav, button, .print\:hidden {
+
+  header, nav, footer, button, .print\:hidden, [role="dialog"], .modal-backdrop {
     display: none !important;
   }
+
+  #printable-report-document {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;
+  }
+
   .print\:border-none {
     border: none !important;
   }
@@ -25,13 +44,50 @@
   .print\:m-0 {
     margin: 0 !important;
   }
-  section {
-    page-break-inside: avoid;
-    break-inside: avoid;
+
+  /* Prevent awkward mid-element splits */
+  section, .avoid-break, tr, .print-avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
+
+  /* Ensure high contrast for ink-saving and readability */
+  .executive-summary-print {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 2px solid #4f46e5 !important;
+  }
+
+  .executive-summary-print * {
+    color: #0f172a !important;
+  }
+
+  .executive-summary-print .text-teal-300,
+  .executive-summary-print .text-cyan-300,
+  .executive-summary-print .text-amber-300,
+  .executive-summary-print .text-indigo-300 {
+    color: #3730a3 !important;
+    font-weight: 800 !important;
+  }
+
+  .executive-summary-print .border-white\/10 {
+    border-color: #e2e8f0 !important;
+  }
+
+  .executive-summary-print .bg-white\/10 {
+    background-color: #e0e7ff !important;
+    color: #3730a3 !important;
+  }
+
+  .executive-summary-print .bg-white\/5 {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+  }
+
   @page {
     size: A4 portrait;
-    margin: 1.2cm;
+    margin: 10mm 12mm 12mm 12mm;
   }
 }
+
 
