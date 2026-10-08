@@ -304,7 +304,7 @@ GenZi Academy by. Pak GuruAI`;
 }
 
 // POST /api/scan-fingerprint (Analisis Otomatis Gambar/Foto Sidik Jari via Gemini Vision dengan Retry & Fallback)
-app.post('/api/scan-fingerprint', async (req, res) => {
+app.post(['/api/scan-fingerprint', '/scan-fingerprint'], async (req, res) => {
   try {
     const { imageBase64, mimeType = 'image/jpeg', fingerKey = 'L1', hand = 'left' } = req.body;
 
@@ -441,7 +441,7 @@ Output HARUS format JSON murni:
 });
 
 // POST /api/analyze-dmit (Analisis Psikometrik DMIT Lengkap dengan Auto-Retry & 503 Resilient Fallback)
-app.post('/api/analyze-dmit', async (req, res) => {
+app.post(['/api/analyze-dmit', '/analyze-dmit'], async (req, res) => {
   try {
     const { clientIdentity, fingerprints, calculatedMetrics, institutionName } = req.body;
 

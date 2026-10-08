@@ -101,23 +101,48 @@ export const DMITReportView: React.FC<DMITReportViewProps> = ({
     const reportElement = document.getElementById('printable-report-document');
     if (!reportElement) return;
 
+    const clone = reportElement.cloneNode(true) as HTMLElement;
+    // Remove any pure SVG radar charts or decorative icons that might not render in Word
+    const svgs = clone.querySelectorAll('svg');
+    svgs.forEach((svg) => {
+      // Keep simple indicators if needed or clean up
+      if (svg.getAttribute('viewBox') === '0 0 200 200') {
+        const replacement = document.createElement('div');
+        replacement.style.cssText = 'padding: 8px; background: #f8fafc; border: 1px dashed #cbd5e1; font-size: 9pt; text-align: center; color: #64748b; margin: 8px 0;';
+        replacement.innerText = '[Grafik Radar 8 Kecerdasan Majemuk - Lihat Tabel Detail di Bawah]';
+        svg.parentNode?.replaceChild(replacement, svg);
+      }
+    });
+
     const docContent = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
 <head>
   <meta charset='utf-8'>
   <title>Laporan Hasil Analisis ARAH DMIT - ${client.fullName || 'Siswa'}</title>
+  <!--[if gte mso 9]>
+  <xml>
+    <w:WordDocument>
+      <w:View>Print</w:View>
+      <w:Zoom>100</w:Zoom>
+      <w:DoNotOptimizeForBrowser/>
+    </w:WordDocument>
+  </xml>
+  <![endif]-->
   <style>
-    body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; color: #0f172a; line-height: 1.6; }
-    h1 { font-size: 18pt; color: #1e1b4b; text-align: center; }
-    h2 { font-size: 13pt; color: #312e81; border-bottom: 2px solid #cbd5e1; padding-bottom: 4px; margin-top: 18px; }
-    h3 { font-size: 11pt; color: #0f172a; margin-top: 10px; }
-    p { margin: 6px 0; }
-    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
-    th, td { border: 1px solid #cbd5e1; padding: 6px 10px; font-size: 10pt; }
-    .box { background-color: #f8fafc; padding: 12px; border-left: 4px solid #4f46e5; margin: 12px 0; }
+    body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; font-size: 11pt; color: #0f172a; line-height: 1.5; margin: 20mm; }
+    h1 { font-size: 18pt; font-weight: bold; color: #1e1b4b; text-align: center; margin: 6pt 0; text-transform: uppercase; }
+    h2 { font-size: 13pt; font-weight: bold; color: #312e81; border-bottom: 2pt solid #6366f1; padding-bottom: 4pt; margin-top: 16pt; margin-bottom: 8pt; }
+    h3 { font-size: 11pt; font-weight: bold; color: #1e293b; margin-top: 10pt; margin-bottom: 4pt; }
+    p { margin: 4pt 0; font-size: 10.5pt; text-align: justify; }
+    table { width: 100%; border-collapse: collapse; margin: 10pt 0; }
+    th { background-color: #f1f5f9; border: 1pt solid #cbd5e1; padding: 6pt 8pt; font-weight: bold; text-align: left; }
+    td { border: 1pt solid #cbd5e1; padding: 6pt 8pt; font-size: 10pt; vertical-align: top; }
+    .box { background-color: #f8fafc; padding: 10pt 12pt; border-left: 4pt solid #4f46e5; margin: 10pt 0; border-radius: 4pt; }
+    ul, ol { margin: 4pt 0 8pt 20pt; padding: 0; }
+    li { margin-bottom: 3pt; }
   </style>
 </head>
 <body>
-  ${reportElement.innerHTML}
+  ${clone.innerHTML}
 </body>
 </html>`;
 
