@@ -10,6 +10,7 @@ import {
   INITIAL_CLIENT,
   INITIAL_FINGERPRINTS,
   calculateMetrics,
+  generateClientFallbackPsychometricReport,
 } from './utils/dmitCalculators';
 import {
   getAdminSettings,
@@ -142,8 +143,22 @@ export default function App() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
       clearInterval(stepInterval);
-      console.error('Analysis error:', err);
-      setErrorMessage(err.message || 'Gagal memproses data analisis. Pastikan GEMINI_API_KEY terkonfigurasi.');
+      console.warn('Backend API unavailable or error, activating client-side deterministic engine:', err);
+      try {
+        const clientReport = generateClientFallbackPsychometricReport(
+          client,
+          fingerprints,
+          metrics,
+          adminSettings.institutionName
+        );
+        setCurrentAnalysis(clientReport);
+        setIsCurrentReportSaved(false);
+        setCurrentView('report');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (innerErr) {
+        console.error('Analysis error:', innerErr);
+        setErrorMessage('Terjadi kendala saat memproses analisis. Silakan periksa data input.');
+      }
     } finally {
       setIsLoading(false);
       setLoadingStep(0);

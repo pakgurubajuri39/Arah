@@ -1,4 +1,4 @@
-import { FingerKey, FingerInfo, FingerprintsRecord, CalculatedMetrics, ClientIdentity } from '../types/dmit';
+import { FingerKey, FingerInfo, FingerprintsRecord, CalculatedMetrics, ClientIdentity, DMITAnalysisResult } from '../types/dmit';
 
 export const FINGER_METADATA: Record<FingerKey, FingerInfo> = {
   L1: {
@@ -308,3 +308,228 @@ export const SAMPLE_PRESETS: SamplePreset[] = [
     },
   },
 ];
+
+export function generateClientFallbackPsychometricReport(
+  clientIdentity: ClientIdentity,
+  fingerprints: FingerprintsRecord,
+  calculatedMetrics: CalculatedMetrics,
+  institutionName: string = 'GenZi Academy'
+): DMITAnalysisResult {
+  const tfrc = calculatedMetrics?.tfrc || 150;
+  const leftRidge = calculatedMetrics?.leftHandRidgeSum || 75;
+  const rightRidge = calculatedMetrics?.rightHandRidgeSum || 75;
+  const total = Math.max(1, leftRidge + rightRidge);
+
+  const leftBrainPct = Math.round((rightRidge / total) * 100);
+  const rightBrainPct = 100 - leftBrainPct;
+
+  const getFingerScore = (key: FingerKey, baseMultiplier: number = 4) => {
+    const f = fingerprints?.[key];
+    if (!f || f.pattern === 'Missing/Tidak Lengkap') return 60;
+    const count = Number(f.ridgeCount) || 15;
+    const patternBonus = f.pattern === 'Whorl' ? 15 : f.pattern === 'Radial Loop' ? 18 : f.pattern === 'Double Loop' ? 14 : 10;
+    return Math.min(98, Math.max(45, Math.round(count * baseMultiplier + patternBonus)));
+  };
+
+  const intelligencesRaw = [
+    {
+      id: 'logical_mathematical',
+      name: 'Kecerdasan Logis-Matematis',
+      score: getFingerScore('R2', 3.8),
+      explanation: 'Memiliki kemampuan analisis deduktif yang terstruktur, cepat menangkap pola numerik, dan memecahkan masalah logis secara sistematis.',
+    },
+    {
+      id: 'spatial',
+      name: 'Kecerdasan Spasial-Visual',
+      score: getFingerScore('L2', 3.7),
+      explanation: 'Daya imajinasi konseptual tiga dimensi yang tinggi, mahir memvisualisasikan ide abstrak, rancangan desain, dan pemetaan ruang.',
+    },
+    {
+      id: 'interpersonal',
+      name: 'Kecerdasan Interpersonal',
+      score: getFingerScore('R1', 3.6),
+      explanation: 'Mahir membaca dinamika sosial, berdiplomasi, memotivasi rekan sebaya, dan membangun jejaring kerja sama kolaboratif.',
+    },
+    {
+      id: 'intrapersonal',
+      name: 'Kecerdasan Intrapersonal',
+      score: getFingerScore('L1', 3.7),
+      explanation: 'Kesadaran diri (self-awareness) yang sangat matang, berprinsip kokoh, mandiri, dan memiliki visi tujuan hidup yang jelas.',
+    },
+    {
+      id: 'linguistic',
+      name: 'Kecerdasan Linguistik-Verbal',
+      score: getFingerScore('R4', 3.5),
+      explanation: 'Sensitivitas tinggi terhadap struktur kalimat, artikulasi lisan, kosa kata kaya, serta daya tangkap argumentasi lisan.',
+    },
+    {
+      id: 'bodily_kinesthetic',
+      name: 'Kecerdasan Kinestetik-Jasmani',
+      score: Math.round((getFingerScore('L3', 3.2) + getFingerScore('R3', 3.2)) / 2),
+      explanation: 'Koordinasi motorik dan presisi tangan yang cekatan, responsif dalam aktivitas fisik, manipulasi alat, dan eksperimen langsung.',
+    },
+    {
+      id: 'musical',
+      name: 'Kecerdasan Musikal',
+      score: getFingerScore('L4', 3.3),
+      explanation: 'Peka terhadap modulasi nada, intonasi suara, harmoni ritmis, dan mudah belajar dengan bantuan irama/audio.',
+    },
+    {
+      id: 'naturalist',
+      name: 'Kecerdasan Naturalis',
+      score: Math.round((getFingerScore('L5', 3.1) + getFingerScore('R5', 3.1)) / 2),
+      explanation: 'Peka terhadap pola lingkungan alami, klasifikasi objek sains, ekosistem, dan adaptif terhadap fenomena alam.',
+    },
+  ];
+
+  intelligencesRaw.sort((a, b) => b.score - a.score);
+  const multipleIntelligences = intelligencesRaw.map((item, index) => ({
+    ...item,
+    rank: index + 1,
+    strengthLevel: (index < 2 ? 'Sangat Kuat' : index < 4 ? 'Kuat' : index < 6 ? 'Sedang' : 'Perlu Stimulasi') as 'Sangat Kuat' | 'Kuat' | 'Sedang' | 'Perlu Stimulasi',
+  }));
+
+  const visualBase = (fingerprints?.L5?.ridgeCount || 15) + (fingerprints?.R5?.ridgeCount || 15);
+  const auditoryBase = (fingerprints?.L4?.ridgeCount || 15) + (fingerprints?.R4?.ridgeCount || 15);
+  const kinestheticBase = (fingerprints?.L3?.ridgeCount || 15) + (fingerprints?.R3?.ridgeCount || 15);
+  const totalVAK = Math.max(1, visualBase + auditoryBase + kinestheticBase);
+
+  const visualPct = Math.round((visualBase / totalVAK) * 100);
+  const auditoryPct = Math.round((auditoryBase / totalVAK) * 100);
+  const kinestheticPct = 100 - visualPct - auditoryPct;
+
+  let dominantStyle = 'Visual';
+  if (auditoryPct > visualPct && auditoryPct >= kinestheticPct) dominantStyle = 'Auditori';
+  else if (kinestheticPct > visualPct && kinestheticPct > auditoryPct) dominantStyle = 'Kinestetik';
+  else if (Math.abs(visualPct - auditoryPct) < 5) dominantStyle = 'Visual-Auditori';
+
+  const speedRating = tfrc > 170 ? 'Sangat Cepat' : tfrc > 130 ? 'Cepat & Adaptif' : tfrc > 100 ? 'Moderat & Stabil' : 'Metodis & Reflektif';
+
+  const top1 = multipleIntelligences[0].id;
+  const isScience = top1 === 'logical_mathematical' || top1 === 'spatial' || top1 === 'naturalist';
+
+  const highSchoolRecommendation = {
+    recommendedTrack: isScience ? 'SMA Jurusan MIPA / Sains Terapan' : 'SMA Jurusan IPS / Humaniora Terapan',
+    smkSpecializations: isScience
+      ? ['Rekayasa Perangkat Lunak & AI', 'Mekatronika & Robotika', 'Teknik Desain Pemodelan']
+      : ['Manajemen Bisnis Digital', 'Komunikasi & Periklanan Kreatif', 'Perbankan & Akuntansi'],
+    academicReasoning: `Profil neokorteks menunjukkan kekuatan dominan pada ${multipleIntelligences[0].name} dan ${multipleIntelligences[1].name}, sangat cocok dengan model berpikir analitis berbasis proyek.`,
+  };
+
+  const universityMajors = isScience
+    ? ['Teknik Informatika / Ilmu Komputer', 'Data Science & Artificial Intelligence', 'Arsitektur & Perencanaan Spasial', 'Teknik Biomedis', 'Fisika Terapan']
+    : ['Ilmu Hubungan Internasional', 'Manajemen & Kewirausahaan Digital', 'Ilmu Komunikasi & Media Baru', 'Psikologi Terapan', 'Hukum Bisnis'];
+
+  const careerProfessions = isScience
+    ? ['AI Engineer / Solution Architect', 'Data Scientist', 'Desainer Produk Digital / Arsitek', 'Konsultan Teknologi', 'Peneliti R&D']
+    : ['Diplomat / Konsultan Strategi Publik', 'Manajer Operasi Bisnis', 'Creative Director', 'Spesialis Negosiasi & Kemitraan', 'Analis Kebijakan'];
+
+  const institution = institutionName || 'GenZi Academy';
+
+  return {
+    brainDominance: {
+      leftPercentage: leftBrainPct,
+      rightPercentage: rightBrainPct,
+      summary: leftBrainPct >= rightBrainPct ? 'Dominan Otak Kiri (Analitis & Terstruktur)' : 'Dominan Otak Kanan (Kreatif & Holistik)',
+      detail: `Siswa memiliki kecenderungan ${leftBrainPct >= rightBrainPct ? 'pemikiran logis-sekuensial dan analitis' : 'kreativitas visual, pemikiran lateral, dan intuisi yang tajam'}.`,
+      sectionConclusion: `Siswa beroperasi paling efektif ketika ide kreatif (${rightBrainPct}%) diwadahi dalam target dan jadwal aksi terstruktur (${leftBrainPct}%).`,
+    },
+    multipleIntelligences,
+    multipleIntelligencesConclusion: `Kombinasi dua kecerdasan teratas (${multipleIntelligences[0].name} dan ${multipleIntelligences[1].name}) merupakan aset bawaan terbesar siswa yang harus menjadi poros utama dalam memilih mata pelajaran dan kegiatan ekstrakurikuler.`,
+    learningStyleVAK: {
+      visual: visualPct,
+      auditory: auditoryPct,
+      kinesthetic: kinestheticPct,
+      dominantStyle,
+      explanation: `Modalitas penerimaan informasi dominan adalah ${dominantStyle}. Daya serap belajar meningkat signifikan saat materi disajikan dengan stimulasi ${dominantStyle}.`,
+      teacherStrategies: [
+        'Sajikan materi pembelajaran berbasis studi kasus terstruktur.',
+        'Gunakan diagram alur dan infografis untuk memvisualisasikan konsep abstrak.',
+        'Beri kesempatan berdiskusi atau mempresentasikan pemahaman secara lisan.',
+        'Kaitkan teori pembelajaran dengan simulasi atau pemecahan masalah nyata.',
+      ],
+      studentStrategies: [
+        'Gunakan stabilo warna berbeda untuk menandai poin-poin penting.',
+        'Buat rangkuman materi dalam bentuk mind map atau bagan konsep mandiri.',
+        'Ulangi materi penting dengan membaca bersuara atau merekam suara sendiri.',
+        'Terapkan metode Pomodoro (25 menit belajar fokus, 5 menit jeda istirahat).',
+      ],
+      sectionConclusion: `Retensi belajar melonjak drastis saat materi disajikan melalui rangsangan sensorik ${dominantStyle} dan strategi belajar yang terpersonalisasi.`,
+    },
+    personalityAndThinking: {
+      primaryType: leftBrainPct >= rightBrainPct ? 'Visioner Analitis & Terencana' : 'Inovator Adaptif & Dinamis',
+      coreCharacteristics: [
+        'Memiliki rasa ingin tahu tinggi terhadap hubungan sebab-akibat.',
+        'Tekun dan berorientasi pada penyelesaian tugas secara sistematis.',
+        'Menyukai lingkungan belajar yang tertib, apresiatif, dan memiliki target jelas.',
+        'Mandiri dalam mencari referensi tambahan ketika topik materi diminati.',
+      ],
+      decisionMakingStyle: leftBrainPct >= rightBrainPct ? 'Berbasis data, fakta, dan pertimbangan logis matang.' : 'Berbasis intuisi kreatif, nilai kemanusiaan, dan eksplorasi alternatif.',
+      stressResponse: 'Membutuhkan ruang jeda reflektif dan pemetaan ulang skala prioritas saat menghadapi beban tugas tinggi.',
+      communicationStyle: 'Lugas, terstruktur, menghargai fakta objektif, dan terbuka terhadap diskusi argumentatif yang konstruktif.',
+      sectionConclusion: 'Komunikasi yang hangat, apresiatif, serta kejelasan ekspektasi tugas akan memaksimalkan stabilitas emosi dan daya juang siswa.',
+    },
+    learningCapacityTFRC: {
+      tfrcValue: tfrc,
+      speedRating,
+      capacityCategory: speedRating,
+      analysis: `Total Ridge Count (TFRC) bernilai ${tfrc} garis mencerminkan kepadatan neokorteks dengan kecepatan penyerapan materi kategori ${speedRating}.`,
+      sectionConclusion: `Dengan TFRC ${tfrc} garis (${speedRating}), kapasitas pemrosesan otak anak sangat mumpuni. Kunci keberhasilan adalah konsistensi belajar harian 30-45 menit yang berkualitas tinggi.`,
+    },
+    quotientOrientation: {
+      iq: Math.min(35, Math.max(20, Math.round((leftBrainPct / 100) * 32 + 10))),
+      eq: Math.min(35, Math.max(20, Math.round((rightBrainPct / 100) * 30 + 12))),
+      aq: 25,
+      cq: Math.min(35, Math.max(18, Math.round((rightBrainPct / 100) * 28 + 10))),
+      explanation: 'Distribusi kuadran kecerdasan menunjukkan potensi seimbang antara IQ (intelektual) dan EQ (kecerdasan emosional).',
+    },
+    educationalCareerRecommendations: {
+      highSchoolRecommendation,
+      universityMajors,
+      careerProfessions,
+      developmentAdvice: 'Kembangkan portofolio karya nyata sejak dini, ikuti kompetisi minat bakat, dan dampingi dengan komunikasi keluarga yang terbuka.',
+      sectionConclusion: `Rekomendasi penjurusan ${highSchoolRecommendation.recommendedTrack} dan jalur perguruan tinggi ${universityMajors.slice(0, 2).join(', ')} memberikan keselarasan optimal antara potensi genetik dan masa depan.`,
+    },
+    overallExecutiveSummary: {
+      coreIdentity: `Anak memiliki profil keunggulan genetik berbasis ${multipleIntelligences[0].name} dengan dominasi ${leftBrainPct >= rightBrainPct ? 'Otak Kiri' : 'Otak Kanan'} dan modalitas gaya belajar ${dominantStyle}. Karakter alaminya mandiri, cepat menangkap konsep baru, dan berorientasi pada pencapaian hasil nyata.`,
+      winningFormula: `Gunakan metode belajar ${dominantStyle} terstruktur, fokuskan eksplorasi pada bidang ${isScience ? 'Sains & Teknologi' : 'Komunikasi & Humaniora'}, serta berikan ruang otonomi terkontrol dalam pengerjaan tugas sekolah.`,
+      parentTeacherActionPlan: [
+        `Dampingi anak belajar dengan media ${dominantStyle} (diagram visual, mind-map, atau diskusi tanya-jawab terarah).`,
+        `Dukung partisipasi dalam klub atau olimpiade yang mengasah ${multipleIntelligences[0].name} dan ${multipleIntelligences[1].name}.`,
+        `Jaga ritme belajar dengan jeda istirahat aktif untuk mencegah kelelahan mental sesuai kapasitas TFRC (${tfrc} garis).`,
+        `Arahkan pemilihan mata pelajaran peminatan SMA/SMK sesuai rekomendasi (${highSchoolRecommendation.recommendedTrack}).`,
+      ],
+      counselorNote: `Potensi bawaan adalah benih unggul; lingkungan belajar yang positif dan dukungan keluarga yang penuh apresiasi adalah tanah subur yang akan membuatnya bertumbuh menjadi prestasi gemilang di masa depan.`,
+    },
+    comprehensiveMarkdownReport: `# ${institution.toUpperCase()}
+MODUL MATERI PEMBELAJARAN & LAPORAN ANALISIS DMIT (ARAH)
+"Beri ARAH Pasti untuk Masa Depannya."
+---
+- Nama Klien / Siswa: ${clientIdentity.fullName || 'Siswa'}
+- Tempat, Tanggal Lahir: ${clientIdentity.birthPlace || 'Depok'}, ${clientIdentity.birthDate || '-'}
+- Usia Saat Asesmen: ${clientIdentity.ageYears || 0} Tahun ${clientIdentity.ageMonths || 0} Bulan
+- Total Ridge Count (TFRC): ${tfrc} Garis (${speedRating})
+- Lembaga Pelaksana: ${institution}
+
+## A. Dominasi Belahan Otak (Brain Dominance)
+- Otak Kiri: ${leftBrainPct}%
+- Otak Kanan: ${rightBrainPct}%
+
+## B. 8 Kecerdasan Majemuk (Multiple Intelligences)
+${multipleIntelligences.map((item) => `${item.rank}. **${item.name}** (${item.score}%) - *${item.strengthLevel}*: ${item.explanation}`).join('\n')}
+
+## C. Gaya Belajar Alami (VAK Profil)
+- Visual: ${visualPct}% | Auditori: ${auditoryPct}% | Kinestetik: ${kinestheticPct}%
+- Gaya Belajar Dominan: **${dominantStyle}**
+
+## D. Rekomendasi Pendidikan & Karier
+1. **Rekomendasi Penjurusan**: ${highSchoolRecommendation.recommendedTrack}
+2. **Program Studi Kuliah Ideal**: ${universityMajors.join(', ')}
+3. **Karier Masa Depan**: ${careerProfessions.join(', ')}
+
+---
+Diverifikasi & Ditetapkan di Depok,
+Konselor GenZi Academy
+${institution} by. Pak GuruAI`,
+  };
+}

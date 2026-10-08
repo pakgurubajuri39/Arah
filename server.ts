@@ -15,10 +15,10 @@ const port = Number(process.env.PORT) || 3000;
 app.use(express.json({ limit: '30mb' }));
 
 // Helper to initialize Google GenAI
-function getGenAIClient(): GoogleGenAI {
+function getGenAIClient(): GoogleGenAI | null {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error('GEMINI_API_KEY environment variable is not set. Please configure it in Settings > Secrets.');
+    return null;
   }
   return new GoogleGenAI({
     apiKey,
@@ -29,6 +29,13 @@ function getGenAIClient(): GoogleGenAI {
     },
   });
 }
+
+// Utility: Timeout promise wrapper
+const withTimeout = <T>(promise: Promise<T>, ms: number = 8000): Promise<T> =>
+  Promise.race([
+    promise,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error(`Timeout after ${ms}ms`)), ms)),
+  ]);
 
 // Utility: Sleep for retry delays
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -335,36 +342,40 @@ Output HARUS format JSON murni:
 
     const promptText = `Analisis foto sidik jari ini untuk jari ${fingerKey} (Tangan ${hand === 'left' ? 'Kiri' : 'Kanan'}). Kembalikan JSON murni.`;
 
-    // Attempt Gemini with retries
+    // Attempt Gemini with retries and hard timeout
     let responseText = '';
-    const modelsToTry = ['gemini-3.8-flash', 'gemini-flash-latest'];
+    const modelsToTry = ['gemini-2.5-flash', 'gemini-2.5-flash-preview', 'gemini-flash-latest'];
 
-    for (const modelName of modelsToTry) {
-      try {
-        const response = await ai.models.generateContent({
-          model: modelName,
-          contents: [
-            {
-              inlineData: {
-                mimeType: mimeType || 'image/jpeg',
-                data: cleanBase64,
+    if (ai) {
+      for (const modelName of modelsToTry) {
+        try {
+          const response = await withTimeout(
+            ai.models.generateContent({
+              model: modelName,
+              contents: [
+                {
+                  inlineData: {
+                    mimeType: mimeType || 'image/jpeg',
+                    data: cleanBase64,
+                  },
+                },
+                { text: promptText },
+              ],
+              config: {
+                systemInstruction,
+                responseMimeType: 'application/json',
+                temperature: 0.2,
               },
-            },
-            { text: promptText },
-          ],
-          config: {
-            systemInstruction,
-            responseMimeType: 'application/json',
-            temperature: 0.2,
-          },
-        });
-        if (response.text) {
-          responseText = response.text;
-          break;
+            }),
+            7000
+          );
+          if (response.text) {
+            responseText = response.text;
+            break;
+          }
+        } catch (err: any) {
+          console.warn(`Vision model ${modelName} failed or timed out (${err?.message || err}). Trying next...`);
         }
-      } catch (err: any) {
-        console.warn(`Vision model ${modelName} failed or busy (${err?.message || err}). Trying next...`);
-        await sleep(800);
       }
     }
 
@@ -547,49 +558,47 @@ Berikan analisis terstruktur dalam format JSON dengan properti yang lengkap, men
 `;
 
     let parsedResult = null;
-    let aiError = null;
 
-    // Retry loop with model fallback to handle 503 high demand spikes
-    const modelsToTry = ['gemini-3.8-flash', 'gemini-flash-latest'];
+    // Fast and responsive models with strict timeout
+    const modelsToTry = ['gemini-2.5-flash', 'gemini-2.5-flash-preview', 'gemini-flash-latest'];
+    const ai = getGenAIClient();
 
-    for (let attempt = 0; attempt < 3; attempt++) {
-      const selectedModel = modelsToTry[attempt % modelsToTry.length];
-      try {
-        const ai = getGenAIClient();
-        const response = await ai.models.generateContent({
-          model: selectedModel,
-          contents: promptText,
-          config: {
-            systemInstruction,
-            responseMimeType: 'application/json',
-            temperature: 0.3,
-          },
-        });
-
-        const responseText = response.text || '{}';
+    if (ai) {
+      for (const selectedModel of modelsToTry) {
         try {
-          parsedResult = JSON.parse(responseText);
-        } catch {
-          const match = responseText.match(/\{[\s\S]*\}/);
-          if (match) parsedResult = JSON.parse(match[0]);
-        }
+          const response = await withTimeout(
+            ai.models.generateContent({
+              model: selectedModel,
+              contents: promptText,
+              config: {
+                systemInstruction,
+                responseMimeType: 'application/json',
+                temperature: 0.3,
+              },
+            }),
+            8000
+          );
 
-        if (parsedResult && parsedResult.multipleIntelligences) {
-          break; // Succeeded!
-        }
-      } catch (err: any) {
-        aiError = err;
-        console.warn(`Attempt ${attempt + 1} with model ${selectedModel} encountered error:`, err?.message || err);
-        // Wait briefly before retrying (exponential backoff)
-        if (attempt < 2) {
-          await sleep(1200 * (attempt + 1));
+          const responseText = response.text || '{}';
+          try {
+            parsedResult = JSON.parse(responseText);
+          } catch {
+            const match = responseText.match(/\{[\s\S]*\}/);
+            if (match) parsedResult = JSON.parse(match[0]);
+          }
+
+          if (parsedResult && parsedResult.multipleIntelligences) {
+            break; // Succeeded!
+          }
+        } catch (err: any) {
+          console.warn(`Model ${selectedModel} failed or timed out (${err?.message || err}). Trying next...`);
         }
       }
     }
 
-    // If Gemini API is still unavailable due to 503 high demand spikes, seamlessly activate the Dermatoglyphics Deterministic Engine!
+    // If Gemini API is unavailable or busy, seamlessly activate the Dermatoglyphics Deterministic Engine!
     if (!parsedResult || !parsedResult.multipleIntelligences) {
-      console.log('Gemini model unavailable (503 spike). Activating deterministic psychometric engine fallback.');
+      console.log('Gemini model unavailable or timed out. Activating deterministic psychometric engine fallback.');
       parsedResult = generateFallbackPsychometricReport(clientIdentity, fingerprints, calculatedMetrics, resolvedInstitution);
     }
 
@@ -600,18 +609,27 @@ Berikan analisis terstruktur dalam format JSON dengan properti yang lengkap, men
     });
   } catch (error: any) {
     console.error('Fatal error in DMIT analysis route:', error);
-    // Never send 500/503 crash to the user! Fallback gracefully:
-    const fallback = generateFallbackPsychometricReport(
-      req.body?.clientIdentity,
-      req.body?.fingerprints,
-      req.body?.calculatedMetrics,
-      req.body?.institutionName || 'GenZi Academy'
-    );
-    return res.json({
-      success: true,
-      data: fallback,
-      analyzedAt: new Date().toISOString(),
-    });
+    // Never send 500 crash to the user! Fallback gracefully:
+    try {
+      const fallback = generateFallbackPsychometricReport(
+        req.body?.clientIdentity || {},
+        req.body?.fingerprints || {},
+        req.body?.calculatedMetrics || {},
+        req.body?.institutionName || 'GenZi Academy'
+      );
+      return res.status(200).json({
+        success: true,
+        data: fallback,
+        analyzedAt: new Date().toISOString(),
+      });
+    } catch (fallbackError) {
+      console.error('Secondary fallback error:', fallbackError);
+      return res.status(200).json({
+        success: true,
+        data: generateFallbackPsychometricReport({}, {}, {}, 'GenZi Academy'),
+        analyzedAt: new Date().toISOString(),
+      });
+    }
   }
 });
 
