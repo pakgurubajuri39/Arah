@@ -1,0 +1,6 @@
+{
+  "name": "ARAH - Analisa Rahasia Anak Hebat",
+  "description": "Beri ARAH Pasti untuk Masa Depannya. Aplikasi Analisis DMIT berbasis sidik jari dan AI untuk memetakan potensi genetik, gaya belajar VAK, kecerdasan majemuk, dan rekomendasi karier siswa oleh GenZi Academy.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
