@@ -128,13 +128,33 @@ export default function App() {
       clearInterval(stepInterval);
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Server responded with status ${response.status}`);
+        console.warn(`Server responded with status ${response.status}, activating seamless client psychometric engine.`);
+        const clientReport = generateClientFallbackPsychometricReport(
+          client,
+          fingerprints,
+          metrics,
+          adminSettings.institutionName
+        );
+        setCurrentAnalysis(clientReport);
+        setIsCurrentReportSaved(false);
+        setCurrentView('report');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
       }
 
       const resJson = await response.json();
       if (!resJson.data) {
-        throw new Error('Hasil analisis tidak valid dari server.');
+        const clientReport = generateClientFallbackPsychometricReport(
+          client,
+          fingerprints,
+          metrics,
+          adminSettings.institutionName
+        );
+        setCurrentAnalysis(clientReport);
+        setIsCurrentReportSaved(false);
+        setCurrentView('report');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
       }
 
       setCurrentAnalysis(resJson.data);

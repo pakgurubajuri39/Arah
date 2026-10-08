@@ -142,14 +142,14 @@ function generateFallbackPsychometricReport(
   }));
 
   // Learning Style VAK (Visual, Auditory, Kinesthetic)
-  const visualBase = (fingerprints?.L5?.ridgeCount || 15) + (fingerprints?.R5?.ridgeCount || 15);
-  const auditoryBase = (fingerprints?.L4?.ridgeCount || 15) + (fingerprints?.R4?.ridgeCount || 15);
-  const kinestheticBase = (fingerprints?.L3?.ridgeCount || 15) + (fingerprints?.R3?.ridgeCount || 15);
+  const visualBase = Number(fingerprints?.L5?.ridgeCount || 15) + Number(fingerprints?.R5?.ridgeCount || 15);
+  const auditoryBase = Number(fingerprints?.L4?.ridgeCount || 15) + Number(fingerprints?.R4?.ridgeCount || 15);
+  const kinestheticBase = Number(fingerprints?.L3?.ridgeCount || 15) + Number(fingerprints?.R3?.ridgeCount || 15);
   const totalVAK = Math.max(1, visualBase + auditoryBase + kinestheticBase);
 
   const visualPct = Math.round((visualBase / totalVAK) * 100);
   const auditoryPct = Math.round((auditoryBase / totalVAK) * 100);
-  const kinestheticPct = 100 - visualPct - auditoryPct;
+  const kinestheticPct = Math.max(0, 100 - visualPct - auditoryPct);
 
   let dominantStyle = 'Visual';
   if (auditoryPct > visualPct && auditoryPct >= kinestheticPct) dominantStyle = 'Auditori';
@@ -311,7 +311,7 @@ GenZi Academy by. Pak GuruAI`;
 }
 
 // POST /api/scan-fingerprint (Analisis Otomatis Gambar/Foto Sidik Jari via Gemini Vision dengan Retry & Fallback)
-app.post(['/api/scan-fingerprint', '/scan-fingerprint'], async (req, res) => {
+export async function handleScanFingerprint(req: express.Request, res: express.Response) {
   try {
     const { imageBase64, mimeType = 'image/jpeg', fingerKey = 'L1', hand = 'left' } = req.body;
 
@@ -342,9 +342,9 @@ Output HARUS format JSON murni:
 
     const promptText = `Analisis foto sidik jari ini untuk jari ${fingerKey} (Tangan ${hand === 'left' ? 'Kiri' : 'Kanan'}). Kembalikan JSON murni.`;
 
-    // Attempt Gemini with retries and hard timeout
+    // Fast responsive models with strict 7s timeout
     let responseText = '';
-    const modelsToTry = ['gemini-2.5-flash', 'gemini-2.5-flash-preview', 'gemini-flash-latest'];
+    const modelsToTry = ['gemini-2.5-flash-lite', 'gemini-2.5-flash'];
 
     if (ai) {
       for (const modelName of modelsToTry) {
@@ -449,10 +449,12 @@ Output HARUS format JSON murni:
       fingerKey: key,
     });
   }
-});
+}
+
+app.post(['/api/scan-fingerprint', '/scan-fingerprint'], handleScanFingerprint);
 
 // POST /api/analyze-dmit (Analisis Psikometrik DMIT Lengkap dengan Auto-Retry & 503 Resilient Fallback)
-app.post(['/api/analyze-dmit', '/analyze-dmit'], async (req, res) => {
+export async function handleAnalyzeDMIT(req: express.Request, res: express.Response) {
   try {
     const { clientIdentity, fingerprints, calculatedMetrics, institutionName } = req.body;
 
@@ -559,8 +561,8 @@ Berikan analisis terstruktur dalam format JSON dengan properti yang lengkap, men
 
     let parsedResult = null;
 
-    // Fast and responsive models with strict timeout
-    const modelsToTry = ['gemini-2.5-flash', 'gemini-2.5-flash-preview', 'gemini-flash-latest'];
+    // Fast and responsive models with strict 7.5s timeout
+    const modelsToTry = ['gemini-2.5-flash-lite', 'gemini-2.5-flash'];
     const ai = getGenAIClient();
 
     if (ai) {
@@ -576,7 +578,7 @@ Berikan analisis terstruktur dalam format JSON dengan properti yang lengkap, men
                 temperature: 0.3,
               },
             }),
-            8000
+            7500
           );
 
           const responseText = response.text || '{}';
@@ -598,11 +600,11 @@ Berikan analisis terstruktur dalam format JSON dengan properti yang lengkap, men
 
     // If Gemini API is unavailable or busy, seamlessly activate the Dermatoglyphics Deterministic Engine!
     if (!parsedResult || !parsedResult.multipleIntelligences) {
-      console.log('Gemini model unavailable or timed out. Activating deterministic psychometric engine fallback.');
+      console.log('Activating deterministic psychometric engine fallback.');
       parsedResult = generateFallbackPsychometricReport(clientIdentity, fingerprints, calculatedMetrics, resolvedInstitution);
     }
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       data: parsedResult,
       analyzedAt: new Date().toISOString(),
@@ -631,7 +633,9 @@ Berikan analisis terstruktur dalam format JSON dengan properti yang lengkap, men
       });
     }
   }
-});
+}
+
+app.post(['/api/analyze-dmit', '/analyze-dmit'], handleAnalyzeDMIT);
 
 // Setup Vite middleware in dev or static files in production (only when running as standalone server, not on Vercel)
 const isProduction = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;

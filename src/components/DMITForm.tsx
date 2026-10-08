@@ -108,82 +108,117 @@ export const DMITForm: React.FC<DMITFormProps> = ({ onSubmit, isLoading, institu
   const handleUploadAndScanFingerprint = async (key: FingerKey, file: File) => {
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const base64Data = e.target?.result as string;
-      if (!base64Data) return;
-
-      setFingerImages((prev) => ({ ...prev, [key]: base64Data }));
-      setScanningFinger((prev) => ({ ...prev, [key]: true }));
-
-      try {
-        const hand = key.startsWith('L') ? 'left' : 'right';
-        const response = await fetch('/api/scan-fingerprint', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            imageBase64: base64Data,
-            mimeType: file.type || 'image/jpeg',
-            fingerKey: key,
-            hand,
-          }),
-        });
-
-        const json = await response.json().catch(() => ({}));
-
-        let detectedPattern: FingerprintPattern = 'Ulnar Loop';
-        let detectedRidge = 16;
-        let confidence = 92;
-        let reasoning = 'Pola berhasil terdeteksi dari morfologi lekukan garis.';
-
-        if (json?.data) {
-          detectedPattern = json.data.pattern as FingerprintPattern;
-          detectedRidge = Number(json.data.ridgeCount) || 16;
-          confidence = json.data.confidence || 92;
-          reasoning = json.data.visualReasoning || reasoning;
-        } else {
-          // Reliable fallback based on finger anatomy
-          detectedPattern = key === 'L1' || key === 'R1' || key === 'R2' ? 'Whorl' : 'Ulnar Loop';
-          detectedRidge = key === 'L1' || key === 'R1' ? 18 : 15;
-        }
-
-        // AUTOMATICALLY FILL Pattern and Ridge Count in state!
-        setFingerprints((prev) => ({
-          ...prev,
-          [key]: {
-            pattern: detectedPattern,
-            ridgeCount: detectedRidge,
-          },
-        }));
-
-        setScanResults((prev) => ({
-          ...prev,
-          [key]: {
-            pattern: detectedPattern,
-            ridgeCount: detectedRidge,
-            confidence,
-            reasoning,
-          },
-        }));
-
-        // Trigger flash highlight
-        setRecentlyAutoFilled((prev) => ({ ...prev, [key]: true }));
-        setTimeout(() => {
-          setRecentlyAutoFilled((prev) => ({ ...prev, [key]: false }));
-        }, 3000);
-      } catch (err: any) {
-        console.error('Scan error:', err);
-        // Fallback auto-population so user is never stuck
-        const fallbackPattern = key === 'L1' || key === 'R1' || key === 'R2' ? 'Whorl' : 'Ulnar Loop';
-        setFingerprints((prev) => ({
-          ...prev,
-          [key]: { pattern: fallbackPattern, ridgeCount: 16 },
-        }));
-      } finally {
-        setScanningFinger((prev) => ({ ...prev, [key]: false }));
-      }
+    // Fast client-side image optimization: downscale to max 600px to ensure instant upload & sub-second Gemini vision inference
+    const readAndOptimizeImage = (inputFile: File): Promise<string> => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const rawBase64 = event.target?.result as string;
+          if (!rawBase64) return resolve('');
+          const img = new Image();
+          img.onload = () => {
+            const maxDim = 600;
+            let { width, height } = img;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', 0.82));
+            } else {
+              resolve(rawBase64);
+            }
+          };
+          img.onerror = () => resolve(rawBase64);
+          img.src = rawBase64;
+        };
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(inputFile);
+      });
     };
-    reader.readAsDataURL(file);
+
+    const base64Data = await readAndOptimizeImage(file);
+    if (!base64Data) return;
+
+    setFingerImages((prev) => ({ ...prev, [key]: base64Data }));
+    setScanningFinger((prev) => ({ ...prev, [key]: true }));
+
+    try {
+      const hand = key.startsWith('L') ? 'left' : 'right';
+      const response = await fetch('/api/scan-fingerprint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageBase64: base64Data,
+          mimeType: 'image/jpeg',
+          fingerKey: key,
+          hand,
+        }),
+      });
+
+      const json = await response.json().catch(() => ({}));
+
+      let detectedPattern: FingerprintPattern = 'Ulnar Loop';
+      let detectedRidge = 16;
+      let confidence = 92;
+      let reasoning = 'Pola berhasil terdeteksi dari morfologi lekukan garis.';
+
+      if (json?.data) {
+        detectedPattern = json.data.pattern as FingerprintPattern;
+        detectedRidge = Number(json.data.ridgeCount) || 16;
+        confidence = json.data.confidence || 92;
+        reasoning = json.data.visualReasoning || reasoning;
+      } else {
+        // Reliable fallback based on finger anatomy
+        detectedPattern = key === 'L1' || key === 'R1' || key === 'R2' ? 'Whorl' : 'Ulnar Loop';
+        detectedRidge = key === 'L1' || key === 'R1' ? 18 : 15;
+      }
+
+      // AUTOMATICALLY FILL Pattern and Ridge Count in state!
+      setFingerprints((prev) => ({
+        ...prev,
+        [key]: {
+          pattern: detectedPattern,
+          ridgeCount: detectedRidge,
+        },
+      }));
+
+      setScanResults((prev) => ({
+        ...prev,
+        [key]: {
+          pattern: detectedPattern,
+          ridgeCount: detectedRidge,
+          confidence,
+          reasoning,
+        },
+      }));
+
+      // Trigger flash highlight
+      setRecentlyAutoFilled((prev) => ({ ...prev, [key]: true }));
+      setTimeout(() => {
+        setRecentlyAutoFilled((prev) => ({ ...prev, [key]: false }));
+      }, 3000);
+    } catch (err: any) {
+      console.error('Scan error:', err);
+      // Fallback auto-population so user is never stuck
+      const fallbackPattern = key === 'L1' || key === 'R1' || key === 'R2' ? 'Whorl' : 'Ulnar Loop';
+      setFingerprints((prev) => ({
+        ...prev,
+        [key]: { pattern: fallbackPattern, ridgeCount: 16 },
+      }));
+    } finally {
+      setScanningFinger((prev) => ({ ...prev, [key]: false }));
+    }
   };
 
   // Instant Simulation Auto-Scan for 1 Finger

@@ -389,14 +389,14 @@ export function generateClientFallbackPsychometricReport(
     strengthLevel: (index < 2 ? 'Sangat Kuat' : index < 4 ? 'Kuat' : index < 6 ? 'Sedang' : 'Perlu Stimulasi') as 'Sangat Kuat' | 'Kuat' | 'Sedang' | 'Perlu Stimulasi',
   }));
 
-  const visualBase = (fingerprints?.L5?.ridgeCount || 15) + (fingerprints?.R5?.ridgeCount || 15);
-  const auditoryBase = (fingerprints?.L4?.ridgeCount || 15) + (fingerprints?.R4?.ridgeCount || 15);
-  const kinestheticBase = (fingerprints?.L3?.ridgeCount || 15) + (fingerprints?.R3?.ridgeCount || 15);
+  const visualBase = Number(fingerprints?.L5?.ridgeCount || 15) + Number(fingerprints?.R5?.ridgeCount || 15);
+  const auditoryBase = Number(fingerprints?.L4?.ridgeCount || 15) + Number(fingerprints?.R4?.ridgeCount || 15);
+  const kinestheticBase = Number(fingerprints?.L3?.ridgeCount || 15) + Number(fingerprints?.R3?.ridgeCount || 15);
   const totalVAK = Math.max(1, visualBase + auditoryBase + kinestheticBase);
 
   const visualPct = Math.round((visualBase / totalVAK) * 100);
   const auditoryPct = Math.round((auditoryBase / totalVAK) * 100);
-  const kinestheticPct = 100 - visualPct - auditoryPct;
+  const kinestheticPct = Math.max(0, 100 - visualPct - auditoryPct);
 
   let dominantStyle = 'Visual';
   if (auditoryPct > visualPct && auditoryPct >= kinestheticPct) dominantStyle = 'Auditori';
@@ -505,9 +505,9 @@ export function generateClientFallbackPsychometricReport(
 MODUL MATERI PEMBELAJARAN & LAPORAN ANALISIS DMIT (ARAH)
 "Beri ARAH Pasti untuk Masa Depannya."
 ---
-- Nama Klien / Siswa: ${clientIdentity.fullName || 'Siswa'}
-- Tempat, Tanggal Lahir: ${clientIdentity.birthPlace || 'Depok'}, ${clientIdentity.birthDate || '-'}
-- Usia Saat Asesmen: ${clientIdentity.ageYears || 0} Tahun ${clientIdentity.ageMonths || 0} Bulan
+- Nama Klien / Siswa: ${clientIdentity?.fullName || 'Siswa'}
+- Tempat, Tanggal Lahir: ${clientIdentity?.birthPlace || 'Depok'}, ${clientIdentity?.birthDate || '-'}
+- Usia Saat Asesmen: ${clientIdentity?.ageYears || 0} Tahun ${clientIdentity?.ageMonths || 0} Bulan
 - Total Ridge Count (TFRC): ${tfrc} Garis (${speedRating})
 - Lembaga Pelaksana: ${institution}
 
